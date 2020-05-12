@@ -1,0 +1,40 @@
+---
+name: Deploy
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Backend
+      uses: actions/checkout@v2
+      with:
+       path: backend
+    - name: Checkout Deploy
+      uses: actions/checkout@v2
+      with:
+       repository: k42-software/autopush-test
+       token: ${{ secrets.GIT_DEPLOY_TOKEN }}
+       path: deploy
+       ref: develop
+    - name: Build
+      working-directory: ${{ github.workspace }}
+      env:
+        WORKSPACE: ${{ github.workspace }}
+      run: |
+        mv ${WORKSPACE}/backend/src/ ${WORKSPACE}/deploy/src/
+    - name: Commit
+      working-directory: ${{ github.workspace }}/deploy/
+      env:
+        MESSAGE: AUTO ${{ github.repository }} ${{ github.ref }} ${{ github.sha }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git status
+        git commit -a -m "${MESSAGE}"
+    - name: Push
+      working-directory: ${{ github.workspace }}/deploy/
+      env:
+        REPO: https://${{ github.actor }}:${{ secrets.GIT_DEPLOY_TOKEN }}@github.com/AmalgamProjects/flixfinder-deploy.git
+      run: |
+        git push "${REPO}" HEAD:develop
