@@ -1,5 +1,9 @@
 # [START django_app]
 runtime: python37
+entrypoint: gunicorn -b :$PORT flixfinder.wsgi
+
+env_variables:
+  DEBUG: TRUE
 
 handlers:
 # This configures Google App Engine to serve the files in the app's static
