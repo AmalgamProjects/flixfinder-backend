@@ -16,6 +16,10 @@ jobs:
        token: ${{ secrets.GIT_DEPLOY_TOKEN }}
        path: deploy
        ref: develop
+    - name: Checkout Deploy history
+      working-directory: ${{ github.workspace }}/deploy/
+      run: |
+        git fetch --prune --unshallow
     - name: Build
       working-directory: ${{ github.workspace }}
       env:
