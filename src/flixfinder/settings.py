@@ -94,7 +94,7 @@ if os.getenv('GAE_APPLICATION', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': os.getenv('SQL_HOST', '/cloudsql/[YOUR-CONNECTION-NAME]'),
+            'HOST': os.getenv('SQL_HOST', '/cloudsql/flixfinder-develop'),
             'USER': os.getenv('SQL_USER', 'django'),
             'PASSWORD': os.getenv('SQL_PASS', 'django'),
             'NAME': os.getenv('SQL_NAME', 'django'),
