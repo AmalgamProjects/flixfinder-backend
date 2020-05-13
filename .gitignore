@@ -92,3 +92,6 @@ db.sqlite3
 .idea/
 *.iml
 
+# Project
+src/firebase_sa_key.json
+
