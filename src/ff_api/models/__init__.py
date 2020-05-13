@@ -12,7 +12,8 @@ from .imdb import \
     Crew, \
     Episode, \
     Principal, \
-    Rating
+    Rating, \
+    Genre
 
 from .seen import \
     Seen

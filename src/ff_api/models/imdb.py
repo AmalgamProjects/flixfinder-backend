@@ -10,10 +10,17 @@ NOTICE: This data is obtained under a Non-Commercial Use License
 
 """
 
+import uuid
+
 from django.db import models
 
 from ..fields import SeparatedValuesField
 
+
+class Genre(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    
 
 class Title(models.Model):
     tconst = models.CharField(primary_key=True, max_length=255)
@@ -24,22 +31,22 @@ class Title(models.Model):
     startYear = models.CharField(max_length=4)
     endYear = models.CharField(null=True, max_length=4)
     runtimeMinutes = models.CharField(max_length=10)
-    genres = SeparatedValuesField()
+    genres = models.ManyToManyField(Genre)
 
 
 class Name(models.Model):
     nconst = models.CharField(primary_key=True, max_length=255)
     primaryName = models.CharField(max_length=255)
-    birthYear = models.IntegerField()
+    birthYear = models.IntegerField(null=True)
     deathYear = models.IntegerField(null=True)
     primaryProfession = SeparatedValuesField()
-    knownForTitles = SeparatedValuesField()
+    knownForTitles = models.ManyToManyField(Title, blank=True)
 
 
 class Crew(models.Model):
     tconst = models.ForeignKey(Title, on_delete=models.CASCADE)
-    directors = SeparatedValuesField()
-    writers = SeparatedValuesField()
+    directors = models.ManyToManyField(Name, related_name='directors')
+    writers = models.ManyToManyField(Name, related_name='writers')
 
 
 class Episode(models.Model):
