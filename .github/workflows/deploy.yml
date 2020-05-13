@@ -12,7 +12,7 @@ jobs:
     - name: Checkout Deploy
       uses: actions/checkout@v2
       with:
-       repository: k42-software/autopush-test
+       repository: AmalgamProjects/flixfinder-deploy
        token: ${{ secrets.GIT_DEPLOY_TOKEN }}
        path: deploy
        ref: develop
