@@ -22,6 +22,6 @@ def serve_spa(request, path):
     :return:
     """
     try:
-        return serve(request, path, settings.STATIC_ROOT, False)
+        return serve(request, path, settings.SPA_ROOT, False)
     except Http404:
-        return serve(request, 'index.html', settings.STATIC_ROOT)
+        return serve(request, 'index.html', settings.SPA_ROOT)
