@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
@@ -26,9 +25,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'test')
 DEBUG = os.getenv('DEBUG', 'FALSE') == 'TRUE'
 
 ALLOWED_HOSTS = [
-	'*'
+    '*'
 ]
-
 
 # Application definition
 
@@ -39,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'ff_api',
+    'ff_spa',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'flixfinder.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -80,9 +79,9 @@ WSGI_APPLICATION = 'flixfinder.wsgi.application'
 # See https://docs.djangoproject.com/en/2.1/ref/databases/#mysql-db-api-drivers
 # for more information
 import pymysql
+
 pymysql.version_info = (1, 4, 2, "final", 0)
 pymysql.install_as_MySQLdb()
-
 
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google Cloud SQL using
@@ -110,7 +109,7 @@ else:
     #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
     #
     # See https://cloud.google.com/sql/docs/mysql-connect-proxy
-    #DATABASES = {
+    # DATABASES = {
     #    'default': {
     #        'ENGINE': 'django.db.backends.mysql',
     #        'HOST': '127.0.0.1',
@@ -119,7 +118,7 @@ else:
     #        'USER': '[YOUR-USERNAME]',
     #        'PASSWORD': '[YOUR-PASSWORD]',
     #    }
-    #}
+    # }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -139,7 +138,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -153,8 +151,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '../static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
