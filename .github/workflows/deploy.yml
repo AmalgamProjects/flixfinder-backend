@@ -39,8 +39,9 @@ jobs:
       working-directory: ${{ github.workspace }}/backend/
       run: |
         cd src/
-        ./manage.py check
-        ./manage.py collectstatic
+        ./manage.py check --no-color
+        ./manage.py check --no-color --deploy
+        ./manage.py collectstatic --clear --noinput --no-color
     - name: Move to deploy
       working-directory: ${{ github.workspace }}
       env:
