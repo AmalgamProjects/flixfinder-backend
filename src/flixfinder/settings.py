@@ -163,7 +163,17 @@ STATIC_URL = '/static/'
 STATIC_ROOT = './static/static/'
 SPA_ROOT = './static/'
 
+FIREBASE_KEY_FILE = os.getenv(
+    'FIREBASE_KEY_FILE',
+    os.path.join(BASE_DIR, 'firebase_sa_key.json')
+)
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 100,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'ff_api.authentication.FirebaseAuthentication'
+    ]
 }

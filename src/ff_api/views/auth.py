@@ -9,9 +9,13 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'username'
+    filter_fields = ('username', 'email',)
+    ordering_fields = ('username', 'email',)
+    ordering = ('email',)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
