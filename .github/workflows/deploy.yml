@@ -27,6 +27,7 @@ jobs:
       env:
         WORKSPACE: ${{ github.workspace }}
       run: |
+        rm -rf ${WORKSPACE}/deploy/src/
         mv ${WORKSPACE}/backend/src/ ${WORKSPACE}/deploy/src/
     - name: Commit
       working-directory: ${{ github.workspace }}/deploy/
