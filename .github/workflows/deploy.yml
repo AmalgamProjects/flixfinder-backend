@@ -19,7 +19,9 @@ jobs:
     - name: Checkout Deploy history
       working-directory: ${{ github.workspace }}/deploy/
       run: |
-        git fetch --prune --unshallow
+        git fetch --unshallow
+		git checkout develop
+		git pull
     - name: Build
       working-directory: ${{ github.workspace }}
       env:
