@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import os.path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -167,6 +168,8 @@ FIREBASE_KEY_FILE = os.getenv(
     'FIREBASE_KEY_FILE',
     os.path.join(BASE_DIR, 'firebase_sa_key.json')
 )
+if not os.path.isfile(FIREBASE_KEY_FILE):
+    FIREBASE_KEY_FILE = None
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
