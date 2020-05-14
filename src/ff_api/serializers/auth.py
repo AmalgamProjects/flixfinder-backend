@@ -9,12 +9,37 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class ShallowUserSerializer(serializers.HyperlinkedModelSerializer):
+    """
+
+    """
     url = serializers.HyperlinkedIdentityField(
         view_name='user-detail',
         lookup_field='username'
     )
-    gravatar = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'url',
+            'username',
+            'email',
+        )
+        read_only_fields = (
+            'url',
+            'username',
+            'email',
+        )
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    """
+
+    """
+    url = serializers.HyperlinkedIdentityField(
+        view_name='user-detail',
+        lookup_field='username'
+    )
 
     class Meta:
         model = User
@@ -22,18 +47,23 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'url',
             'username',
             'email',
-            # 'groups',
-            'gravatar'
         ]
-
-    def get_gravatar(self, instance):
-        email = str(instance.email).strip().lower()
-        bytes = email.encode()
-        hash = hashlib.md5(bytes).hexdigest()
-        return 'https://www.gravatar.com/avatar/%s?d=retro&r=g' % hash
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    """
+
+    """
+    url = serializers.HyperlinkedIdentityField(
+        view_name='group-detail',
+        lookup_field='name'
+    )
+    users = ShallowUserSerializer(source='user_set', many=True, read_only=True)
+
     class Meta:
         model = Group
-        fields = ['url', 'name']
+        fields = [
+            'url',
+            'name',
+            'users'
+        ]

@@ -43,7 +43,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().order_by('primaryTitle')
     serializer_class = TitleSerializer
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = 'primaryTitle'
+    lookup_field = 'tconst'
     filter_fields = ('titleType', 'primaryTitle', 'genres')
     ordering_fields = ('primaryTitle')
     ordering = ('primaryTitle',)

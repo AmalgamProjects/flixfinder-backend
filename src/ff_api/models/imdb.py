@@ -33,6 +33,9 @@ class Title(models.Model):
     runtimeMinutes = models.CharField(max_length=10)
     genres = models.ManyToManyField(Genre)
 
+    def __str__(self):
+        return '%s - %s - %s' % (self.tconst, self.titleType, self.primaryTitle)
+
 
 class Name(models.Model):
     nconst = models.CharField(primary_key=True, max_length=255)

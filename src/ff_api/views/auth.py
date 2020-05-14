@@ -31,3 +31,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'name'
+    filter_fields = ('name',)
+    ordering_fields = ('name',)
+    ordering = ('name',)
