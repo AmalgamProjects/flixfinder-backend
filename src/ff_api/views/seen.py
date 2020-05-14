@@ -7,7 +7,9 @@ https://www.django-rest-framework.org/api-guide/views/
 from rest_framework import viewsets
 from rest_framework import permissions
 
+from ..filters import SeenEntryFilter
 from ..models import Seen
+from ..permissions import IsOwner
 from ..serializers import SeenSerializer
 
 
@@ -17,6 +19,13 @@ class SeenViewSet(viewsets.ModelViewSet):
     """
     queryset = Seen.objects.all()
     serializer_class = SeenSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, IsOwner,)
+    filter_class = SeenEntryFilter
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            return queryset.none()
+        return queryset.filter(user=self.request.user)
     
 

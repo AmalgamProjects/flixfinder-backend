@@ -1,0 +1,1 @@
+from .ownership import IsOwner

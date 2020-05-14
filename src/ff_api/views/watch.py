@@ -7,7 +7,9 @@ https://www.django-rest-framework.org/api-guide/views/
 from rest_framework import viewsets
 from rest_framework import permissions
 
+from ..filters import WatchEntryFilter
 from ..models import Watch
+from ..permissions import IsOwner
 from ..serializers import WatchSerializer
 
 
@@ -17,6 +19,14 @@ class WatchViewSet(viewsets.ModelViewSet):
     """
     queryset = Watch.objects.all()
     serializer_class = WatchSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, IsOwner,)
+    filter_class = WatchEntryFilter
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            return queryset.none()
+        return queryset.filter(user=self.request.user)
+    
     
 
