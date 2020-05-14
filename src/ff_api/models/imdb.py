@@ -20,7 +20,7 @@ from ..fields import SeparatedValuesField
 class Genre(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
-    
+
 
 class Title(models.Model):
     tconst = models.CharField(primary_key=True, max_length=255)
@@ -39,7 +39,7 @@ class Name(models.Model):
     primaryName = models.CharField(max_length=255)
     birthYear = models.IntegerField(null=True)
     deathYear = models.IntegerField(null=True)
-    primaryProfession = SeparatedValuesField()
+    primaryProfession = SeparatedValuesField(default="", blank=True, null=True)
     knownForTitles = models.ManyToManyField(Title, blank=True)
 
 
