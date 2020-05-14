@@ -5,7 +5,11 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 from rest_framework import serializers
 
-from ..shallow import ShallowFavouriteSerializer, ShallowSeenSerializer, ShallowWatchSerializer
+from ..shallow import \
+    ShallowFavouriteSerializer, \
+    ShallowFavouriteGenreSerializer, \
+    ShallowSeenSerializer, \
+    ShallowWatchSerializer
 from ...models import User
 
 
@@ -18,6 +22,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='username'
     )
     favourites = ShallowFavouriteSerializer(many=True, read_only=True)
+    favouriteGenres = ShallowFavouriteGenreSerializer(many=True, read_only=True, source='favourite_genres')
     seen = ShallowSeenSerializer(many=True, read_only=True)
     watch = ShallowWatchSerializer(many=True, read_only=True)
 
@@ -28,6 +33,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'username',
             'email',
             'favourites',
+            'favouriteGenres',
             'seen',
             'watch',
         ]

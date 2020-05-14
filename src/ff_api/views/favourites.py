@@ -4,13 +4,13 @@ https://www.django-rest-framework.org/api-guide/views/
 
 """
 
-from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework import viewsets
 
 from ..filters import FavouriteEntryFilter
-from ..models import Favourite
+from ..models import Favourite, FavouriteGenre
 from ..permissions import IsOwner
-from ..serializers import FavouriteSerializer
+from ..serializers import FavouriteSerializer, FavouriteGenreSerializer
 
 
 class FavouriteViewSet(viewsets.ModelViewSet):
@@ -21,9 +21,18 @@ class FavouriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavouriteSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwner,)
     filter_class = FavouriteEntryFilter
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         if not self.request.user.is_authenticated:
             return queryset.none()
         return queryset.filter(user=self.request.user)
+
+
+class FavouriteGenreViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = FavouriteGenre.objects.all()
+    serializer_class = FavouriteGenreSerializer
+    permission_classes = [permissions.IsAuthenticated]

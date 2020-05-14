@@ -7,7 +7,8 @@ from .user import \
     ShallowUserSerializer
 
 from .favourites import \
-    ShallowFavouriteSerializer
+    ShallowFavouriteSerializer, \
+    ShallowFavouriteGenreSerializer
 
 from .imdb import \
     ShallowTitleSerializer

@@ -9,7 +9,8 @@ from django.contrib.auth.models import \
     Group
 
 from .favourites import \
-    Favourite
+    Favourite, \
+    FavouriteGenre
 
 from .imdb import \
     Title, \

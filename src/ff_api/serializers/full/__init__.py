@@ -4,7 +4,8 @@ http://www.django-rest-framework.org/api-guide/serializers/
 """
 
 from .favourites import \
-    FavouriteSerializer
+    FavouriteSerializer, \
+    FavouriteGenreSerializer
 
 from .group import \
     GroupSerializer

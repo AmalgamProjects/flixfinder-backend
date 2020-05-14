@@ -9,7 +9,8 @@ from .auth import \
     GroupViewSet
 
 from .favourites import \
-    FavouriteViewSet
+    FavouriteViewSet, \
+    FavouriteGenreViewSet
 
 from .imdb import \
     GenreViewSet, \
