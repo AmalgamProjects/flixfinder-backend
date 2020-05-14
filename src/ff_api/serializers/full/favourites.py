@@ -5,10 +5,9 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 from rest_framework import serializers
 
-from .auth import ShallowUserSerializer
-from .imdb import ShallowTitleSerializer
-from ..models import Favourite, User, Title
-from ..fields import WritableNestedRelatedField
+from ..shallow import ShallowUserSerializer, ShallowTitleSerializer
+from ...models import Favourite, User, Title
+from ...fields import WritableNestedRelatedField
 
 
 class FavouriteSerializer(serializers.HyperlinkedModelSerializer):

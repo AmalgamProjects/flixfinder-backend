@@ -5,26 +5,13 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 from rest_framework import serializers
 
-from ..models import Genre, Title, Crew, Episode, Principal, Rating
+from ...models import Genre, Title, Crew, Episode, Principal, Rating
 
 
 class GenreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Genre
         fields = ['name']
-
-
-class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='title-detail',
-        lookup_field='tconst'
-    )
-
-    id = serializers.SlugField(source='tconst')
-
-    class Meta:
-        model = Title
-        fields = ['url', 'id', 'titleType', 'primaryTitle']
 
 
 class TitleSerializer(serializers.HyperlinkedModelSerializer):
