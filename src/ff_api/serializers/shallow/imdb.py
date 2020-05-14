@@ -18,4 +18,4 @@ class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Title
-        fields = ['url', 'id', 'titleType', 'primaryTitle']
+        fields = ['id', 'titleType', 'primaryTitle']

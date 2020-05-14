@@ -15,10 +15,10 @@ class GenreSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TitleSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='title-detail',
-        lookup_field='tconst'
-    )
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name='title-detail',
+    #     lookup_field='tconst'
+    # )
 
     id = serializers.SlugField(source='tconst')
 
@@ -30,7 +30,7 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Title
-        fields = ['url', 'id', 'titleType', 'primaryTitle', 'startYear', 'endYear', 'runtimeMinutes', 'genres']
+        fields = ['id', 'titleType', 'primaryTitle', 'startYear', 'endYear', 'runtimeMinutes', 'genres']
 
 
 class CrewSerializer(serializers.HyperlinkedModelSerializer):

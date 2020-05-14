@@ -17,10 +17,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     """
 
     """
-    url = serializers.HyperlinkedIdentityField(
-        view_name='user-detail',
-        lookup_field='username'
-    )
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name='user-detail',
+    #     lookup_field='username'
+    # )
     favourites = ShallowFavouriteSerializer(many=True, read_only=True)
     favouriteGenres = ShallowFavouriteGenreSerializer(many=True, read_only=True, source='favourite_genres')
     seen = ShallowSeenSerializer(many=True, read_only=True)
@@ -29,7 +29,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = [
-            'url',
             'username',
             'email',
             'favourites',

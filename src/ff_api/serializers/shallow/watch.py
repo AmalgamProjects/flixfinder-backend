@@ -25,4 +25,4 @@ class ShallowWatchSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Watch
-        fields = ['url', 'user', 'title']
+        fields = ['id', 'user', 'title']

@@ -13,16 +13,15 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
     """
 
     """
-    url = serializers.HyperlinkedIdentityField(
-        view_name='group-detail',
-        lookup_field='name'
-    )
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name='group-detail',
+    #     lookup_field='name'
+    # )
     users = ShallowUserSerializer(source='user_set', many=True, read_only=True)
 
     class Meta:
         model = Group
         fields = [
-            'url',
             'name',
             'users'
         ]
