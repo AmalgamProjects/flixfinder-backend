@@ -28,11 +28,6 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
         slug_field='name'
     )
     
-    actors = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='name-detail',
-    )
 
     class Meta:
         model = Title
@@ -44,7 +39,6 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
             'endYear', 
             'runtimeMinutes', 
             'genres',
-            'actors'
         ]
 
 class NameSerializer(serializers.HyperlinkedModelSerializer):
