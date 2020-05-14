@@ -15,6 +15,7 @@ from .favourites import \
 from .imdb import \
     GenreViewSet, \
     TitleViewSet, \
+    NameViewSet, \
     CrewViewSet, \
     EpisodeViewSet, \
     PrincipalViewSet, \

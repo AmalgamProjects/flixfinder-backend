@@ -13,6 +13,7 @@ from .group import \
 from .imdb import \
     GenreSerializer, \
     TitleSerializer, \
+    NameSerializer, \
     CrewSerializer, \
     EpisodeSerializer, \
     PrincipalSerializer, \

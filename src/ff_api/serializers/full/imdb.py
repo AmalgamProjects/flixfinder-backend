@@ -5,7 +5,7 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 from rest_framework import serializers
 
-from ...models import Genre, Title, Crew, Episode, Principal, Rating
+from ...models import Genre, Title, Name, Crew, Episode, Principal, Rating
 
 
 class GenreSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,12 +27,38 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         slug_field='name'
     )
+    
+    actors = serializers.HyperlinkedRelatedField(
+        many=True,
+        view_name='name-detail',
+    )
 
     class Meta:
         model = Title
-        fields = ['url', 'id', 'titleType', 'primaryTitle', 'startYear', 'endYear', 'runtimeMinutes', 'genres']
+        fields = [
+            'url', 
+            'id', 
+            'titleType', 
+            'primaryTitle', 
+            'startYear', 
+            'endYear', 
+            'runtimeMinutes', 
+            'genres',
+            'actors'
+        ]
 
-
+class NameSerializer(serializers.HyperlinkedModelSerializer):
+    knownForTitles = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='title-detail'
+    )
+    
+    class Meta:
+        model = Name
+        fields = ['primaryName', 'birthYear', 'deathYear', 'primaryProfession', 'knownForTitles']
+        
+    
 class CrewSerializer(serializers.HyperlinkedModelSerializer):
     directors = serializers.HyperlinkedRelatedField(
         many=True,
@@ -61,7 +87,7 @@ class PrincipalSerializer(serializers.HyperlinkedModelSerializer):
     nconst = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
-        view_name='name-detail'
+        view_name='principal-view'
     )
 
     class Meta:

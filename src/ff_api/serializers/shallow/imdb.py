@@ -19,3 +19,11 @@ class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Title
         fields = ['url', 'id', 'titleType', 'primaryTitle']
+        
+
+class ShallowNameSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.SlugField(source='nconts')
+    
+    class Meta:
+        model = Name
+        fields = ['id', 'primaryName']

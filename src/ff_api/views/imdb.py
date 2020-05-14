@@ -12,6 +12,7 @@ from rest_framework import viewsets
 from ..models import \
     Genre, \
     Title, \
+    Name, \
     Crew, \
     Episode, \
     Principal, \
@@ -19,6 +20,7 @@ from ..models import \
 from ..serializers import \
     GenreSerializer, \
     TitleSerializer, \
+    NameSerializer, \
     CrewSerializer, \
     EpisodeSerializer, \
     PrincipalSerializer, \
@@ -26,9 +28,6 @@ from ..serializers import \
 
 
 class GenreViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = Genre.objects.all().order_by('name')
     serializer_class = GenreSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -39,9 +38,6 @@ class GenreViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
     queryset = Title.objects.all().order_by('primaryTitle')
     serializer_class = TitleSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -51,39 +47,33 @@ class TitleViewSet(viewsets.ModelViewSet):
     ordering = ('primaryTitle',)
     search_fields = ['primaryTitle']
     filter_backends = (filters.SearchFilter,)
+    
 
+class NameViewSet(viewsets.ModelViewSet):
+    queryset = Name.objects.all()
+    serializer_class = NameSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
 
 class CrewViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class EpisodeViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
     queryset = Episode.objects.all()
     serializer_class = EpisodeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class PrincipalViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
     queryset = Principal.objects.all()
     serializer_class = PrincipalSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class RatingViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     permission_classes = [permissions.IsAuthenticated]
