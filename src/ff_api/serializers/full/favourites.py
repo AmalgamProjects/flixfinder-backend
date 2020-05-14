@@ -29,7 +29,7 @@ class FavouriteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Favourite
-        fields = ['url', 'user', 'title']
+        fields = ['id', 'user', 'title']
 
 
 class FavouriteGenreSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,4 +50,4 @@ class FavouriteGenreSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = FavouriteGenre
-        fields = ['url', 'user', 'genre']
+        fields = ['id', 'user', 'genre']
