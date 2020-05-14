@@ -9,10 +9,10 @@ from ...models import Title, Name
 
 
 class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(
-        view_name='title-detail',
-        lookup_field='tconst'
-    )
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name='title-detail',
+    #     lookup_field='tconst'
+    # )
 
     id = serializers.SlugField(source='tconst')
 
