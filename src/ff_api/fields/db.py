@@ -38,7 +38,7 @@ class SeparatedValuesField(models.TextField):
             return value
         return value.split(self.token)
 
-    def get_db_prep_value(self, value, prepared=False):
+    def get_db_prep_value(self, value, connection=None, prepared=False):
         if not value: return
         assert (isinstance(value, list) or isinstance(value, tuple))
         return self.token.join([str(s) for s in value])
