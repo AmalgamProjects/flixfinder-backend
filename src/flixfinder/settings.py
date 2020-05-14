@@ -101,6 +101,24 @@ if os.getenv('GAE_APPLICATION', None):
             'NAME': os.getenv('SQL_NAME', 'django'),
         }
     }
+elif os.getenv('SQL_PROXY', None):
+    # Alternatively we can use the Cloud SQL via the proxy.
+    # To start the proxy via command line:
+    #
+    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'USER': os.getenv('SQL_USER', 'django'),
+            'PASSWORD': os.getenv('SQL_PASS', 'django'),
+            'NAME': os.getenv('SQL_NAME', 'django'),
+        }
+    }
+
 else:
     # Running locally so use the sqlie3 backend for development and testing
     DATABASES = {
@@ -109,22 +127,6 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-    # Alternatively we can use the Cloud SQL via the proxy.
-    # To start the proxy via command line:
-    #
-    #     $ cloud_sql_proxy -instances=[INSTANCE_CONNECTION_NAME]=tcp:3306
-    #
-    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
-    # DATABASES = {
-    #    'default': {
-    #        'ENGINE': 'django.db.backends.mysql',
-    #        'HOST': '127.0.0.1',
-    #        'PORT': '3306',
-    #        'NAME': '[YOUR-DATABASE]',
-    #        'USER': '[YOUR-USERNAME]',
-    #        'PASSWORD': '[YOUR-PASSWORD]',
-    #    }
-    # }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
