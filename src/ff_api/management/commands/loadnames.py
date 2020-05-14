@@ -22,6 +22,7 @@ class Command(BaseCommand):
                         except:
                             pass 
                     
+                    
                     name = Name.objects.create(
                         nconst=row[0],
                         primaryName=row[1],

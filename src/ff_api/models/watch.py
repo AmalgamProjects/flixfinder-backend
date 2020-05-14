@@ -10,6 +10,8 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 
+from .imdb import Title
+
 from ..fields import DateTimeFieldWithoutMicroseconds
 
 
@@ -22,5 +24,4 @@ class Watch(models.Model):
         on_delete=models.CASCADE,
         related_name='watch',
     )
-
-    # TODO = foreign key to a movie or tv show
+    title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)

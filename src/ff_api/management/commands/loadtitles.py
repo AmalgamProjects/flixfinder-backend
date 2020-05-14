@@ -14,7 +14,12 @@ class Command(BaseCommand):
         with open(path, 'rt') as f:
             reader = csv.reader(f, delimiter="\t", quotechar='"')
             for row in reader:
-                if count > 1:
+                try:
+                    release = int(row[6])
+                    running = int(row[7])
+                except:
+                    continue
+                if count > 1 and release > 1990 and running > 15:
                     genres = []
                     for genre in row[8].split(','):
                         try:
