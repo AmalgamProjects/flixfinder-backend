@@ -30,6 +30,7 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
     
     actors = serializers.HyperlinkedRelatedField(
         many=True,
+        read_only=True,
         view_name='name-detail',
     )
 

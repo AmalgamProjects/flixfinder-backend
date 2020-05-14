@@ -5,7 +5,7 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 from rest_framework import serializers
 
-from ...models import Title
+from ...models import Title, Name
 
 
 class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
