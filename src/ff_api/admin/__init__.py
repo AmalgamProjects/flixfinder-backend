@@ -9,6 +9,7 @@ from ..models import *
 
 # favourite
 admin.site.register(Favourite)
+admin.site.register(FavouriteGenre)
 
 # imdb
 admin.site.register(Title)
