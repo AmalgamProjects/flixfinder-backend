@@ -22,15 +22,20 @@ class Command(BaseCommand):
                         except:
                             pass 
                     
-                    
-                    name = Name.objects.create(
-                        nconst=row[0],
-                        primaryName=row[1],
-                        birthYear=row[2] if row[2] != '\\N' else None,
-                        deathYear=row[3] if row[3] != '\\N' else None,
-                        primaryProfession=row[4].split(','),
-                    )
-                    name.save();
-                    name.knownForTitles.set(titles)
+                    try:
+                        deathYear = int(row[3])
+                    except:
+                        deathYear = None
+                        
+                    if deathYear is not None and deathYear > 1990:
+                        name = Name.objects.create(
+                            nconst=row[0],
+                            primaryName=row[1],
+                            birthYear=row[2] if row[2] != '\\N' else None,
+                            deathYear=row[3] if row[3] != '\\N' else None,
+                            primaryProfession=row[4].split(','),
+                        )
+                        name.save();
+                        name.knownForTitles.set(titles)
 
                 count += 1

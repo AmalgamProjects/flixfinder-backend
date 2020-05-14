@@ -15,10 +15,14 @@ class Command(BaseCommand):
             if count > 1:
                 reader = csv.reader(f, delimiter="\t", quotechar='"')
                 for row in reader:
-                  episode = Episode.objects.create(
-                  tconst=row[0],
-                  parentTconst=row[1],
-                  seasonNumber=row[2],
-                  episodeNumber=row[3]
-                )
+                    try:
+                        title = Title.objects.get(tconst=row[0])
+                    except:
+                        continue
+                    episode = Episode.objects.create(
+                        tconst=title,
+                        parentTconst=row[1],
+                        seasonNumber=row[2],
+                        episodeNumber=row[3]
+                    )
             count += 1
