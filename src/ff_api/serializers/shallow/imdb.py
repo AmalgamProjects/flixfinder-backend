@@ -5,7 +5,7 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 from rest_framework import serializers
 
-from ...models import Title, Name
+from ...models import Title, Name, Rating
 
 
 class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,3 +27,10 @@ class ShallowNameSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Name
         fields = ['id', 'primaryName']
+        
+        
+class ShallowRatingSerializer(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Rating
+        fields = ['averageRating', 'numVotes']

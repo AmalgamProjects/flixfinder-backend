@@ -35,7 +35,7 @@ class Title(models.Model):
 
     def __str__(self):
         return '%s - %s - %s' % (self.tconst, self.titleType, self.primaryTitle)
-
+    
 
 class Name(models.Model):
     nconst = models.CharField(primary_key=True, max_length=255)
@@ -47,7 +47,7 @@ class Name(models.Model):
 
 
 class Crew(models.Model):
-    tconst = models.ForeignKey(Title, on_delete=models.CASCADE)
+    tconst = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='crew')
     directors = models.ManyToManyField(Name, related_name='directors')
     writers = models.ManyToManyField(Name, related_name='writers')
 
@@ -60,15 +60,15 @@ class Episode(models.Model):
 
 
 class Principal(models.Model):
-    tconst = models.ForeignKey(Title, on_delete=models.CASCADE)
+    tconst = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='principals')
     ordering = models.IntegerField()
-    nconst = models.ForeignKey(Name, on_delete=models.CASCADE)
+    nconst = models.ForeignKey(Name, on_delete=models.CASCADE, related_name='principals')
     category = models.CharField(max_length=255)
     job = models.CharField(max_length=255, null=True)
     characters = models.TextField(null=True)
 
 
 class Rating(models.Model):
-    tconst = models.ForeignKey(Title, on_delete=models.CASCADE)
+    tconst = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='rating')
     averageRating = models.DecimalField(decimal_places=2, max_digits=10)
     numVotes = models.IntegerField()
