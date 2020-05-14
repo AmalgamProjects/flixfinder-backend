@@ -1,3 +1,26 @@
+"""
+https://docs.djangoproject.com/en/2.2/ref/contrib/admin/
+
+"""
+
 from django.contrib import admin
 
-# Register your models here.
+from ..models import *
+
+# favourite
+admin.site.register(Favourite)
+
+# imdb
+admin.site.register(Title)
+admin.site.register(Name)
+admin.site.register(Crew)
+admin.site.register(Episode)
+admin.site.register(Principal)
+admin.site.register(Rating)
+admin.site.register(Genre)
+
+# seen
+admin.site.register(Seen)
+
+# watch
+admin.site.register(Watch)
