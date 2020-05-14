@@ -1,8 +1,26 @@
-from ff_api.models import Genre, Title, Crew, Episode, Principal, Rating
+"""
+https://docs.djangoproject.com/en/2.2/#the-view-layer
+https://www.django-rest-framework.org/api-guide/views/
+
+"""
+
 from rest_framework import viewsets
 from rest_framework import permissions
 
-from ..serializers import GenreSerializer, TitleSerializer, CrewSerializer, EpisodeSerializer, PrincipalSerializer, RatingSerializer
+from ..models import \
+    Genre, \
+    Title, \
+    Crew, \
+    Episode, \
+    Principal, \
+    Rating
+from ..serializers import \
+    GenreSerializer, \
+    TitleSerializer, \
+    CrewSerializer, \
+    EpisodeSerializer, \
+    PrincipalSerializer, \
+    RatingSerializer
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -29,7 +47,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_fields = ('titleType', 'primaryTitle', 'genres')
     ordering_fields = ('primaryTitle')
     ordering = ('primaryTitle',)
-    
+
 
 class CrewViewSet(viewsets.ModelViewSet):
     """
@@ -38,8 +56,8 @@ class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
-    
+
+
 class EpisodeViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
@@ -47,8 +65,8 @@ class EpisodeViewSet(viewsets.ModelViewSet):
     queryset = Episode.objects.all()
     serializer_class = EpisodeSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
-    
+
+
 class PrincipalViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
@@ -56,8 +74,8 @@ class PrincipalViewSet(viewsets.ModelViewSet):
     queryset = Principal.objects.all()
     serializer_class = PrincipalSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
-    
+
+
 class RatingViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.

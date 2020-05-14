@@ -3,10 +3,9 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 """
 
-import hashlib
-
-from ff_api.models import Watch
 from rest_framework import serializers
+
+from ..models import Watch
 
 
 class WatchSerializer(serializers.HyperlinkedModelSerializer):

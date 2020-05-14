@@ -3,10 +3,9 @@ http://www.django-rest-framework.org/api-guide/serializers/
 
 """
 
-import hashlib
-
-from ff_api.models import Seen
 from rest_framework import serializers
+
+from ..models import Seen
 
 
 class SeenSerializer(serializers.HyperlinkedModelSerializer):

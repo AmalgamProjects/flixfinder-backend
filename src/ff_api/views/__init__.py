@@ -1,9 +1,26 @@
-from django.shortcuts import render
+"""
+https://docs.djangoproject.com/en/2.2/#the-view-layer
+https://www.django-rest-framework.org/api-guide/views/
 
-# Create your views here.
+"""
 
-from .auth import *
-from .favourites import *
-from .imdb import *
-from .seen import *
-from .watch import *
+from .auth import \
+    UserViewSet, \
+    GroupViewSet
+
+from .favourites import \
+    FavouriteViewSet
+
+from .imdb import \
+    GenreViewSet, \
+    TitleViewSet, \
+    CrewViewSet, \
+    EpisodeViewSet, \
+    PrincipalViewSet, \
+    RatingViewSet
+
+from .seen import \
+    SeenViewSet
+
+from .watch import \
+    WatchViewSet
