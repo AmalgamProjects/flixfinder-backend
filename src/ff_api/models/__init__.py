@@ -3,6 +3,11 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 
 """
 
+# noinspection PyUnresolvedReferences
+from django.contrib.auth.models import \
+    User, \
+    Group
+
 from .favourites import \
     Favourite
 
