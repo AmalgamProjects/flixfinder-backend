@@ -4,8 +4,10 @@ https://www.django-rest-framework.org/api-guide/views/
 
 """
 
-from rest_framework import viewsets
+from rest_framework import filters
 from rest_framework import permissions
+from rest_framework import viewsets
+
 
 from ..models import \
     Genre, \
@@ -47,6 +49,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_fields = ('titleType', 'primaryTitle', 'genres')
     ordering_fields = ('primaryTitle')
     ordering = ('primaryTitle',)
+    search_fields = ['primaryTitle']
+    filter_backends = (filters.SearchFilter,)
 
 
 class CrewViewSet(viewsets.ModelViewSet):
