@@ -7,6 +7,9 @@ from django.contrib import admin
 
 from ..models import *
 
+# external
+admin.site.register(ExternalResponse)
+
 # favourite
 admin.site.register(Favourite)
 admin.site.register(FavouriteGenre)
