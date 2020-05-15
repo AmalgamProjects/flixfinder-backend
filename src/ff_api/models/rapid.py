@@ -22,7 +22,7 @@ class RapidTitle(models.Model):
     tconst = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='rapid', null=True)
     title = models.CharField(max_length=255, db_index=True)
     titleType = models.CharField(max_length=255)
-    image_url = models.URLField()
+    image_url = models.URLField(blank=True, null=True)
     remote_id = models.CharField(max_length=255, db_index=True)
 
     similar = models.ManyToManyField(Title, related_name='rapid_similar')
@@ -54,20 +54,23 @@ class RapidTitle(models.Model):
 
     @staticmethod
     def populate_one_from_api(tconst_string):
-        data = RapidTitle.call_api('title/get-base', {'tconst': tconst_string})
-        pprint.pprint(data['title'])
-        instance, created = RapidTitle.objects.get_or_create(
-            remote_id=tconst_string,
-            defaults={
-                'title': data['title'],
-                'titleType': data['titleType'],
-                'image_url': data['image']['url'],
-                'remote_id': tconst_string,
-            },
-        )
-        if created:
+        try:
+            data = RapidTitle.call_api('title/get-base', {'tconst': tconst_string})
+            instance, created = RapidTitle.objects.get_or_create(
+                remote_id=tconst_string,
+                defaults={
+                    'title': data['title'],
+                    'titleType': data['titleType'],
+                    'image_url': data['image']['url'],
+                    'remote_id': tconst_string,
+                },
+            )
             instance.tconst = Title.objects.filter(tconst=tconst_string).first()
             instance.save()
+            pprint.pprint('RapidTitle %s ... %s' % (data['title'], instance.tconst))
+        except Exception as e:
+            pprint.pprint(e)
+            pass
 
     @staticmethod
     def populate_related_from_api(tconst_string):
@@ -78,7 +81,7 @@ class RapidTitle(models.Model):
             if not instance:
                 return
         data = RapidTitle.call_api('title/get-more-like-this', {'tconst': tconst_string})
-        pprint.pprint(data)
+        # pprint.pprint(data)
         for ref in data:
             related_tconst = ref.split('/')[2]
             RapidTitle.populate_one_from_api(related_tconst)
@@ -89,7 +92,7 @@ class RapidTitle(models.Model):
     @staticmethod
     def populate_top_rated_movies():
         data = RapidTitle.call_api('title/get-top-rated-movies', None)
-        pprint.pprint(data)
+        # pprint.pprint(data)
         for item in data:
             tconst_string = item['id'].split('/')[2]
             RapidTitle.populate_from_api(tconst_string)

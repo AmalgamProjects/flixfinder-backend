@@ -21,6 +21,7 @@ from ..models import \
 from ..serializers import \
     GenreSerializer, \
     TitleSerializer, \
+    ShallowTitleSerializer, \
     NameSerializer, \
     CrewSerializer, \
     EpisodeSerializer, \
@@ -39,16 +40,20 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TitleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Title.objects.all().order_by('primaryTitle')
-    serializer_class = TitleSerializer
+    queryset = Title.objects.all().order_by('-endYear', '-startYear', 'primaryTitle')
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'tconst'
     filter_fields = ('titleType', 'primaryTitle', 'genres')
-    ordering_fields = ('primaryTitle')
-    ordering = ('primaryTitle',)
-    search_fields = ['primaryTitle', 'titleType']
+    search_fields = ['primaryTitle', 'originalTitle', 'tconst', 'titleType']
     filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     filterset_fields = ['titleType']
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ShallowTitleSerializer
+        if self.action == 'retrieve':
+            return TitleSerializer
+        return TitleSerializer  # create/destroy/update.
 
 
 class NameViewSet(viewsets.ReadOnlyModelViewSet):

@@ -11,7 +11,8 @@ class MovieDbTitleSerializer(serializers.HyperlinkedModelSerializer):
     tconst = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
-        view_name='moviedbtitle-detail'
+        view_name='title-detail',
+        lookup_field='tconst'
     )
 
     class Meta:

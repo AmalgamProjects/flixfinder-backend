@@ -9,8 +9,11 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from .imdb import Title
+from .recommend import Recommendation
 
 from ..fields import DateTimeFieldWithoutMicroseconds
 
@@ -25,8 +28,13 @@ class Seen(models.Model):
         related_name='seen',
     )
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
-    
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['user', 'title'], name='Unique seen')
         ]
+
+
+@receiver(post_save, sender=Seen)
+def seen_saved_handler(sender, instance, **kwargs):
+    Recommendation.update_recommendations_for_user(instance.user)

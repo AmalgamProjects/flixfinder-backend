@@ -3,6 +3,8 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 
 """
 
+from .collate import collate_title
+
 # noinspection PyUnresolvedReferences
 from django.contrib.auth.models import \
     User, \

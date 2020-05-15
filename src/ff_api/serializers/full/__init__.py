@@ -12,28 +12,30 @@ from .group import \
 
 from .imdb import \
     GenreSerializer, \
-    TitleSerializer, \
     NameSerializer, \
     CrewSerializer, \
     EpisodeSerializer, \
     PrincipalSerializer, \
     RatingSerializer
-    
+
 from .mdb import \
     MovieDbTitleSerializer
 
 from .rapid import \
     RapidTitleSerializer
-    
+
 from .recommend import \
     RecommendationSerializer
 
 from .seen import \
     SeenSerializer
 
+from .title import \
+    TitleSerializer
+
 from .tastedive import \
     TasteTitleSerializer
-    
+
 from .user import \
     UserSerializer
 

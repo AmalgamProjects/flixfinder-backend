@@ -117,8 +117,8 @@ elif os.getenv('SQL_PROXY', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
+            'HOST': os.getenv('SQL_HOST', '127.0.0.1'),
+            'PORT': os.getenv('SQL_PORT', '3306'),
             'USER': os.getenv('SQL_USER', 'django'),
             'PASSWORD': os.getenv('SQL_PASS', 'django'),
             'NAME': os.getenv('SQL_NAME', 'django'),

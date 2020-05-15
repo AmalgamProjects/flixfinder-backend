@@ -29,7 +29,7 @@ class Recommendation(models.Model):
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
 
     @staticmethod
-    def make_recommendations_for_user(user: User):
+    def update_recommendations_for_user(user: User):
         # favourite_genres = user.favourite_genres.all()
         # favourites = user.favourites.all()
         # watch = user.watch.all()

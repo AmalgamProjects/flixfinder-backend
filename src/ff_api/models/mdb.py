@@ -21,11 +21,11 @@ class MovieDbTitle(models.Model):
     updated = DateTimeFieldWithoutMicroseconds(auto_now=True)
     tconst = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='moviedb', null=True)
     title = models.CharField(max_length=255, db_index=True)
-    overview = models.TextField()
+    overview = models.TextField(blank=True, null=True)
     vote_average = models.FloatField()
     vote_count = models.IntegerField()
-    backdrop_url = models.URLField()
-    poster_url = models.URLField()
+    backdrop_url = models.URLField(blank=True, null=True)
+    poster_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return 'MovieDB: %s' % self.title
@@ -35,6 +35,7 @@ class MovieDbTitle(models.Model):
         """
         https://developers.themoviedb.org/3/getting-started/introduction
         """
+        pprint.pprint('MovieDbTitle query = %s' % query)
         image_base = 'http://image.tmdb.org/t/p/w500'
         response = requests.get(
             '%s3/search/movie?api_key=%s&query=%s' % (
@@ -45,28 +46,30 @@ class MovieDbTitle(models.Model):
         response.raise_for_status()
         data = response.json()
         for result in data['results']:
-            title = result['title']  # "Ocean's Twelve"
-            pprint.pprint(title)
+            try:
+                title = result['title']  # "Ocean's Twelve"
 
-            backdrop_url = ''
-            if isinstance(result['backdrop_path'], str):
-                backdrop_url = image_base + result['backdrop_path'],  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
-            poster_url = ''
-            if isinstance(result['backdrop_path'], str):
-                poster_url = image_base + result['poster_path'],  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
+                backdrop_url = ''
+                if isinstance(result['backdrop_path'], str):
+                    backdrop_url = image_base + result['backdrop_path'],  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
+                poster_url = ''
+                if isinstance(result['backdrop_path'], str):
+                    poster_url = image_base + result['poster_path'],  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
 
-            instance, created = MovieDbTitle.objects.get_or_create(
-                title=title,
-                defaults={
-                    'title': title,  # "Ocean's Twelve"
-                    'overview': result['overview'],  # 'Danny Ocean reunites with ....
-                    'vote_average': result['vote_average'],  # 6.5
-                    'vote_count': result['vote_count'],  # 4750
-                    'backdrop_url': backdrop_url,
-                    'poster_url': poster_url
-                },
-            )
-            if created:
-                title = Title.objects.filter(primaryTitle=title).first()
-                instance.tconst = title
+                instance, created = MovieDbTitle.objects.get_or_create(
+                    title=title,
+                    defaults={
+                        'title': title,  # "Ocean's Twelve"
+                        'overview': result['overview'],  # 'Danny Ocean reunites with ....
+                        'vote_average': result['vote_average'],  # 6.5
+                        'vote_count': result['vote_count'],  # 4750
+                        'backdrop_url': backdrop_url,
+                        'poster_url': poster_url
+                    },
+                )
+                instance.tconst = Title.objects.filter(primaryTitle=title).first()
                 instance.save()
+                pprint.pprint('MovieDbTitle %s ... %s' % (title, instance.tconst))
+            except Exception as e:
+                pprint.pprint(e)
+                pass
