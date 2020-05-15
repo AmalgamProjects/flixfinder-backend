@@ -52,16 +52,20 @@ class RapidTitle(models.Model):
 
     @staticmethod
     def populate_one_from_api(tconst_string, create_missing_title=True):
+        pprint.pprint('RapidTitle tconst = %s' % tconst_string)
         instance = None
         try:
             data = RapidTitle.call_api('title/get-base', {'tconst': tconst_string})
             # pprint.pprint(data)
+            image_url = ''
+            if 'image' in data and 'url' in data['image']:
+                image_url = data['image']['url']
             instance, created = RapidTitle.objects.get_or_create(
                 remote_id=tconst_string,
                 defaults={
                     'title': data['title'],
                     'titleType': data['titleType'],
-                    'image_url': data['image']['url'],
+                    'image_url': image_url,
                     'remote_id': tconst_string,
                 },
             )
