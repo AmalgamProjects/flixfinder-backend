@@ -15,6 +15,9 @@ from .imdb import \
     ShallowRatingSerializer, \
     ShallowNameSerializer
 
+from .recommend import \
+    ShallowRecommendationSerializer
+
 from .seen import \
     ShallowSeenSerializer
 
