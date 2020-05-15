@@ -15,22 +15,23 @@ class ShallowTitleSerializer(serializers.HyperlinkedModelSerializer):
     # )
 
     id = serializers.SlugField(source='tconst')
+    backdrop_url = serializers.URLField(source="get_backdrop_url")
+    poster_url = serializers.URLField(source="get_poster_url")
 
     class Meta:
         model = Title
-        fields = ['id', 'titleType', 'primaryTitle']
-        
+        fields = ['id', 'titleType', 'primaryTitle', 'backdrop_url', 'poster_url']
+
 
 class ShallowNameSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.SlugField(source='nconts')
-    
+
     class Meta:
         model = Name
         fields = ['id', 'primaryName']
-        
-        
+
+
 class ShallowRatingSerializer(serializers.HyperlinkedModelSerializer):
-    
     class Meta:
         model = Rating
         fields = ['averageRating', 'numVotes']
