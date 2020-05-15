@@ -73,7 +73,7 @@ class Recommendation(models.Model):
         if len(suggestions) > 100:
             suggestions = suggestions[:100]
 
-        user_instance.recommendation.clear()
+        user_instance.recommendation.set([], clear=True)
 
         priority = 0
         for suggestion in suggestions:
