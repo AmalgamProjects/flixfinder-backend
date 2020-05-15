@@ -58,9 +58,13 @@ class MovieDbTitle(models.Model):
             else:
                 titleType = 'tvSeries'
             for result in data[result_type]:
-                # pprint.pprint(result)
+                pprint.pprint(result_type)
+                pprint.pprint(result)
                 try:
-                    title = result['title']  # "Ocean's Twelve"
+                    if 'title' in result:
+                        title = result['title']
+                    else:
+                        title = result['name']
                     backdrop_url = ''
                     if isinstance(result['backdrop_path'], str):
                         backdrop_url = ''.join(
@@ -81,15 +85,20 @@ class MovieDbTitle(models.Model):
                         },
                     )
                     if create_missing_title:
-                        release_date = datetime.datetime.strptime(result['release_date'], '%Y-%m-%d')
+                        if 'release_date' in result:
+                            release_date = datetime.datetime.strptime(result['release_date'], '%Y-%m-%d')
+                            start_year = str(release_date.year)
+                        else:
+                            release_date = None
+                            start_year = ''
                         title_instance, created = Title.objects.update_or_create(
                             tconst=tconst_string,
                             defaults={
                                 'tconst': tconst_string,
                                 'titleType': titleType,
-                                'primaryTitle': result['title'],
-                                'originalTitle': result['title'],
-                                'startYear': str(release_date.year),
+                                'primaryTitle': title,
+                                'originalTitle': title,
+                                'startYear': start_year,
                             }
                         )
                     else:
