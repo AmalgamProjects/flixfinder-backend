@@ -1,4 +1,12 @@
+"""
+https://docs.djangoproject.com/en/2.2/topics/db/models/
+
+Main representation of Movies and TV Shows.
+
+"""
+
 import uuid
+import pprint
 
 from django.db import models
 
@@ -19,6 +27,15 @@ class Title(models.Model):
     endYear = models.CharField(null=True, max_length=4, db_index=True, default='')
     runtimeMinutes = models.CharField(max_length=10, db_index=True, default='')
     genres = models.ManyToManyField(Genre)
+
+    image_url = models.URLField(null=True, default=None)
+    backdrop_url = models.URLField(null=True, default=None)
+    poster_url = models.URLField(null=True, default=None)
+    wikipedia_url = models.URLField(null=True, default=None)
+    youtube_url = models.URLField(null=True, default=None)
+    summary = models.TextField(null=True, default=None)
+    vote_average = models.FloatField(default=0.0)
+    vote_count = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['primaryTitle', 'startYear', 'endYear']
@@ -57,67 +74,72 @@ class Title(models.Model):
         return self._cached_tastedb
 
     def get_image_url(self):
-        instance = self.get_rapid()
-        if instance is not None and instance.image_url != "":
-            return instance.image_url
-        return None
+        if self.image_url is None or self.image_url != "":
+            instance = self.get_rapid()
+            if instance is not None and instance.image_url != "":
+                self.image_url = instance.image_url
+        return self.image_url
 
     def get_backdrop_url(self):
-        instance = self.get_moviedb()
-        if instance is not None and instance.backdrop_url != "":
-            return instance.backdrop_url
-        return None
+        if self.backdrop_url is None or self.backdrop_url != "":
+            instance = self.get_moviedb()
+            if instance is not None and instance.backdrop_url != "":
+                self.backdrop_url = instance.backdrop_url
+        return self.backdrop_url
 
     def get_poster_url(self):
-        instance = self.get_moviedb()
-        if instance is not None and instance.backdrop_url != "":
-            return instance.poster_url
-        return self.get_image_url()
+        if self.backdrop_url is None or self.backdrop_url != "":
+            instance = self.get_moviedb()
+            if instance is not None and instance.backdrop_url != "":
+                self.backdrop_url = instance.poster_url
+            if self.backdrop_url is None or self.backdrop_url == "":
+                self.backdrop_url = self.get_image_url()
+        return self.backdrop_url
 
     def get_wikipedia_url(self):
-        instance = self.get_tastedb()
-        if instance is not None and instance.wikipedia != "":
-            return instance.wikipedia
-        return None
+        if self.wikipedia_url is None or self.wikipedia_url != "":
+            instance = self.get_tastedb()
+            if instance is not None and instance.wikipedia != "":
+                self.wikipedia_url = instance.wikipedia
+        return self.wikipedia_url
 
     def get_youtube_url(self):
-        instance = self.get_tastedb()
-        if instance is not None and instance.youtube != "":
-            return instance.youtube
-        return None
-
-    def get_youtube_url(self):
-        instance = self.get_tastedb()
-        if instance is not None and instance.youtube != "":
-            return instance.youtube
-        return None
+        if self.youtube_url is None or self.youtube_url != "":
+            instance = self.get_tastedb()
+            if instance is not None and instance.youtube != "":
+                self.youtube_url = instance.youtube
+        return self.youtube_url
 
     def get_summary(self):
-        mdb = self.get_moviedb()
-        if mdb is not None and mdb.overview != "":
-            return mdb.overview
-        tdb = self.get_tastedb()
-        if tdb is not None and tdb.teaser != "":
-            return tdb.teaser
-        return None
+        if self.summary is None or self.summary != "":
+            mdb = self.get_moviedb()
+            if mdb is not None and mdb.overview != "":
+                self.summary = mdb.overview
+            if self.summary is None or self.summary == "":
+                tdb = self.get_tastedb()
+                if tdb is not None and tdb.teaser != "":
+                    self.summary = tdb.teaser
+        return self.summary
 
     def get_vote_average(self):
-        try:
-            return self.rating.first().averageRating
-        except Exception:
-            instance = self.get_moviedb()
-            if instance is not None and instance.vote_average != "":
-                return instance.vote_average
-            return 0.0
+        if self.vote_average <= 0.0:
+            try:
+                self.vote_average = self.rating.first().averageRating
+            except Exception:
+                instance = self.get_moviedb()
+                if instance is not None and instance.vote_average != "":
+                    self.vote_average = instance.vote_average
+        return self.vote_average
 
     def get_vote_count(self):
-        try:
-            return self.rating.first().numVotes
-        except Exception:
-            instance = self.get_moviedb()
-            if instance is not None and instance.vote_average != "":
-                return instance.vote_count
-            return 0.0
+        if self.vote_count <= 0:
+            try:
+                self.vote_count = self.rating.first().numVotes
+            except Exception:
+                instance = self.get_moviedb()
+                if instance is not None and instance.vote_average != "":
+                    self.vote_count = instance.vote_count
+        return self.vote_count
 
     def __str__(self):
         return '%s - %s - %s' % (self.tconst, self.titleType, self.primaryTitle)
