@@ -11,20 +11,30 @@ from .tastedive import TasteTitle
 
 
 def collate_title(query):
-    instance = query
-    if isinstance(instance, str):
-        instance = Title.objects.filter(tconst=instance).first()
-        if instance is None:
-            instance = Title.objects.filter(primaryTitle=instance).first()
-    if instance is not None:
-        RapidTitle.populate_from_api(instance.tconst)
-        MovieDbTitle.populate_from_api(instance.primaryTitle)
-        TasteTitle.populate_from_api(instance.primaryTitle)
-    else:
-        pprint.pprint("Title not found in our database: %s" % query)
-        # if isinstance(query, str):
-        #     MovieDbTitle.populate_from_api(query)
-        #     TasteTitle.populate_from_api(query)
+    tconst_string = ''
+
+    if not isinstance(query, str):
+        # noinspection PyBroadException
+        try:
+            tconst_string = query.tconst
+            if not isinstance(tconst_string, str):
+                return
+        except Exception:
+            return
+
+    if isinstance(query, str):
+        if query[:2] == 'tt':
+            tconst_string = query
+        else:
+            instance = Title.objects.filter(primaryTitle=query).first()
+            tconst_string = instance.tconst
+            if not isinstance(tconst_string, str):
+                return
+
+    if isinstance(tconst_string, str) and tconst_string != '':
+        rapid_instance = RapidTitle.populate_from_api(tconst_string)
+        MovieDbTitle.populate_from_api(tconst_string)
+        TasteTitle.populate_from_api(rapid_instance.title)
 
 
 def collate_top_rated_movies():

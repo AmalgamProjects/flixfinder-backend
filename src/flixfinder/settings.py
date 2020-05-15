@@ -197,7 +197,7 @@ CORS_ALLOW_CREDENTIALS = False
 TD_API_HOST = 'https://tastedive.com/api/'
 TD_API_KEY = '369882-FlixFind-5MBQ0Q28'
 
-MDB_API_HOST = "https://api.themoviedb.org/"
+MDB_API_HOST = "api.themoviedb.org"
 MDB_API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb"
 
 RAPID_API_HOST = "imdb8.p.rapidapi.com"  # must not be a URL

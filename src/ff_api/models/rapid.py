@@ -49,8 +49,9 @@ class RapidTitle(models.Model):
         """
         https://rapidapi.com/apidojo/api/imdb8/endpoints
         """
-        RapidTitle.populate_one_from_api(tconst_string)
+        instance = RapidTitle.populate_one_from_api(tconst_string)
         RapidTitle.populate_related_from_api(tconst_string)
+        return instance
 
     @staticmethod
     def populate_one_from_api(tconst_string, create_missing_title=True):

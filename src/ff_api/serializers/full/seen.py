@@ -29,4 +29,4 @@ class SeenSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Seen
-        fields = ['id', 'user', 'title']
+        fields = ['id', 'user', 'title', 'liked', 'disliked']

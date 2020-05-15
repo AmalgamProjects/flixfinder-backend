@@ -16,7 +16,7 @@ class RecommendationViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     """
-    queryset = Recommendation.objects.all()
+    queryset = Recommendation.objects.order_by('priority')
     serializer_class = RecommendationSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwner,)
 

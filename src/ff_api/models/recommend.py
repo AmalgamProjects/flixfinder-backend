@@ -7,6 +7,7 @@ Movies or TV Shows that the user wants to watch.
 
 import uuid
 import pprint
+import random
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -28,18 +29,65 @@ class Recommendation(models.Model):
     priority = models.IntegerField(default=1)
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
 
-    @staticmethod
-    def update_recommendations_for_user(user: User):
-        # favourite_genres = user.favourite_genres.all()
-        # favourites = user.favourites.all()
-        # watch = user.watch.all()
-        # seen = user.seen.all()
-        # pprint.pprint(favourites)
-        # pprint.pprint(favourite_genres)
-        # pprint.pprint(watch)
-        # pprint.pprint(seen)
+    class Meta:
+        ordering = ['user', 'priority']
 
-        top_movies = [
+    @staticmethod
+    def _get_suggestions_from_list_item(item_instance):
+        suggestions = []
+        rapid_title = item_instance.title.get_rapid()
+        if rapid_title is not None:
+            for title_instance in rapid_title.similar.all():
+                suggestions.append(title_instance)
+        random.shuffle(suggestions)
+        return suggestions
+
+    @staticmethod
+    def update_recommendations_for_user(user_instance: User):
+
+        suggestions = []
+
+        if len(suggestions) < 100:
+            for favourite in user_instance.favourites.all():
+                suggestions += Recommendation._get_suggestions_from_list_item(favourite)
+
+        if len(suggestions) < 100:
+            for want_to_watch in user_instance.watch.all():
+                suggestions += Recommendation._get_suggestions_from_list_item(want_to_watch)
+
+        if len(suggestions) < 100:
+            for already_seen in user_instance.seen.all():
+                if already_seen.liked and not already_seen.disliked:
+                    suggestions += Recommendation._get_suggestions_from_list_item(already_seen)
+
+        if len(suggestions) < 100:
+            for already_seen in user_instance.seen.all():
+                if not already_seen.liked and not already_seen.disliked:
+                    suggestions += Recommendation._get_suggestions_from_list_item(already_seen)
+
+        # TODO use the data from user_instance.favourite_genres.all()
+
+        while len(suggestions) < 100:
+            suggestions.append(Recommendation.random_good_movie())
+
+        if len(suggestions) > 100:
+            suggestions = suggestions[:100]
+
+        user_instance.recommendation.clear()
+
+        priority = 0
+        for suggestion in suggestions:
+            r = Recommendation(user=user_instance, priority=priority, title=suggestion)
+            r.save()
+            priority += 1
+
+    @staticmethod
+    def random_good_movie():
+        return Title.objects.filter(tconst=Recommendation.random_good_movie_tconst()).first()
+
+    @staticmethod
+    def random_good_movie_tconst():
+        random.choice([
             'tt0111161',
             'tt0068646',
             'tt0071562',
@@ -140,9 +188,4 @@ class Recommendation(models.Model):
             'tt2106476',
             'tt0093058',
             'tt0053125',
-        ]
-
-        for movie in top_movies:
-            pass
-
-        raise NotImplementedError('Not done this yet')
+        ])

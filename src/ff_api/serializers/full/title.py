@@ -25,10 +25,11 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     principals = serializers.SerializerMethodField()
-    averageRating = serializers.SerializerMethodField()
-    numVotes = serializers.SerializerMethodField()
     directors = serializers.SerializerMethodField()
     writers = serializers.SerializerMethodField()
+
+    averageRating = serializers.FloatField(source="get_vote_average")
+    numVotes = serializers.IntegerField(source="get_vote_count")
 
     image_url = serializers.URLField(source="get_image_url")
     backdrop_url = serializers.URLField(source="get_backdrop_url")
@@ -72,18 +73,6 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
             name_data['category'] = principal_data['category']
             result.append(name_data)
         return result
-
-    def get_averageRating(self, instance):
-        try:
-            return instance.rating.first().averageRating
-        except Exception:
-            return 0.0
-
-    def get_numVotes(self, instance):
-        try:
-            return instance.rating.first().numVotes
-        except Exception:
-            return 0
 
     def get_directors(self, instance):
         result = []

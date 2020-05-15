@@ -28,6 +28,8 @@ class Seen(models.Model):
         related_name='seen',
     )
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
+    liked = models.BooleanField(default=False)
+    disliked = models.BooleanField(default=False)
 
     class Meta:
         constraints = [

@@ -8,6 +8,7 @@ class Genre(models.Model):
     name = models.CharField(max_length=255, db_index=True)
 
 
+# noinspection PyBroadException
 class Title(models.Model):
     tconst = models.CharField(primary_key=True, max_length=255)
     titleType = models.CharField(max_length=255, db_index=True)
@@ -18,6 +19,9 @@ class Title(models.Model):
     endYear = models.CharField(null=True, max_length=4, db_index=True, default='')
     runtimeMinutes = models.CharField(max_length=10, db_index=True, default='')
     genres = models.ManyToManyField(Genre)
+
+    class Meta:
+        ordering = ['primaryTitle', 'startYear', 'endYear']
 
     def is_fully_populated(self):
         return self.rapid.exists() and self.moviedb.exists() and self.tastedb.exists()
@@ -33,7 +37,7 @@ class Title(models.Model):
         instance = self.moviedb.first()
         if instance is None:
             from .mdb import MovieDbTitle
-            instance = MovieDbTitle.populate_from_api(self.primaryTitle)
+            instance = MovieDbTitle.populate_from_api(self.tconst)
         return instance
 
     def get_tastedb(self):
@@ -87,6 +91,24 @@ class Title(models.Model):
         if tdb is not None and tdb.teaser != "":
             return tdb.teaser
         return None
+
+    def get_vote_average(self):
+        try:
+            return self.rating.first().averageRating
+        except Exception:
+            instance = self.get_moviedb()
+            if instance is not None and instance.vote_average != "":
+                return instance.vote_average
+            return 0.0
+
+    def get_vote_count(self):
+        try:
+            return self.rating.first().numVotes
+        except Exception:
+            instance = self.get_moviedb()
+            if instance is not None and instance.vote_average != "":
+                return instance.vote_count
+            return 0.0
 
     def __str__(self):
         return '%s - %s - %s' % (self.tconst, self.titleType, self.primaryTitle)
