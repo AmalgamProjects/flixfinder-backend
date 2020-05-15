@@ -28,6 +28,7 @@ class Title(models.Model):
 
     def get_rapid(self):
         if not hasattr(self, '_cached_rapid'):
+            self._cached_rapid = None
             instance = self.rapid.first()
             if instance is None:
                 from .rapid import RapidTitle
@@ -37,6 +38,7 @@ class Title(models.Model):
 
     def get_moviedb(self):
         if not hasattr(self, '_cached_moviedb'):
+            self._cached_moviedb = None
             instance = self.moviedb.first()
             if instance is None:
                 from .mdb import MovieDbTitle
@@ -46,11 +48,12 @@ class Title(models.Model):
 
     def get_tastedb(self):
         if not hasattr(self, '_cached_tastedb'):
+            self._cached_tastedb = None
             instance = self.tastedb.first()
             if instance is None:
                 from .tastedive import TasteTitle
                 instance = TasteTitle.populate_from_api(self.primaryTitle)
-                self._cached_tastedb = instance
+            self._cached_tastedb = instance
         return self._cached_tastedb
 
     def get_image_url(self):
