@@ -6,7 +6,9 @@ External API response caching
 """
 
 import json
+import pprint
 import requests
+import time
 import uuid
 
 from django.conf import settings
@@ -30,6 +32,8 @@ class ExternalResponse(models.Model):
         prepared = requests.Request('GET', url, headers=headers, params=params).prepare()
         instance = ExternalResponse.objects.filter(query=prepared.url).first()
         if instance is None:
+            pprint.pprint('making real api call')
+            started = time.time()
             with requests.Session() as session:
                 response = session.send(prepared)
                 response.raise_for_status()
@@ -38,4 +42,7 @@ class ExternalResponse(models.Model):
                     response=json.dumps(response.json())
                 )
                 instance.save()
+            pprint.pprint('api call took %s seconds' % (time.time() - started))
+        else:
+            pprint.pprint('using cached api response')
         return json.loads(instance.response)
