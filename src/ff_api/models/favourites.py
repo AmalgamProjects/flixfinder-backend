@@ -34,6 +34,16 @@ class Favourite(models.Model):
             models.UniqueConstraint(fields=['user', 'title'], name='Unique favourite')
         ]
 
+    def get_backdrop_url(self):
+        if self.title is not None:
+            return self.title.get_backdrop_url()
+        return None
+
+    def get_poster_url(self):
+        if self.title is not None:
+            return self.title.get_poster_url()
+        return None
+
 
 class FavouriteGenre(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

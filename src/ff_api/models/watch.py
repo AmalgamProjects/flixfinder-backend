@@ -34,6 +34,16 @@ class Watch(models.Model):
             models.UniqueConstraint(fields=['user', 'title'], name='Unique watch')
         ]
 
+    def get_backdrop_url(self):
+        if self.title is not None:
+            return self.title.get_backdrop_url()
+        return None
+
+    def get_poster_url(self):
+        if self.title is not None:
+            return self.title.get_poster_url()
+        return None
+
 
 @receiver(post_save, sender=Watch)
 def watch_saved_handler(sender, instance, **kwargs):

@@ -32,6 +32,16 @@ class Recommendation(models.Model):
     class Meta:
         ordering = ['user', 'priority']
 
+    def get_backdrop_url(self):
+        if self.title is not None:
+            return self.title.get_backdrop_url()
+        return None
+
+    def get_poster_url(self):
+        if self.title is not None:
+            return self.title.get_poster_url()
+        return None
+
     @staticmethod
     def _get_suggestions_from_list_item(item_instance):
         suggestions = []
