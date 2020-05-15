@@ -27,9 +27,10 @@ class WatchSerializer(serializers.HyperlinkedModelSerializer):
         model=Title,
     )
 
+    primaryTitle = serializers.CharField(source="get_primary_title", read_only=True)
     backdrop_url = serializers.URLField(source="get_backdrop_url", read_only=True)
     poster_url = serializers.URLField(source="get_poster_url", read_only=True)
 
     class Meta:
         model = Watch
-        fields = ['id', 'user', 'title', 'backdrop_url', 'poster_url']
+        fields = ['id', 'user', 'title', 'primaryTitle', 'backdrop_url', 'poster_url']

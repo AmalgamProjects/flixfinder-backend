@@ -27,25 +27,31 @@ class Title(models.Model):
         return self.rapid.exists() and self.moviedb.exists() and self.tastedb.exists()
 
     def get_rapid(self):
-        instance = self.rapid.first()
-        if instance is None:
-            from .rapid import RapidTitle
-            instance = RapidTitle.populate_one_from_api(self.tconst)
-        return instance
+        if not hasattr(self, '_cached_rapid'):
+            instance = self.rapid.first()
+            if instance is None:
+                from .rapid import RapidTitle
+                instance = RapidTitle.populate_one_from_api(self.tconst)
+            self._cached_rapid = instance
+        return self._cached_rapid
 
     def get_moviedb(self):
-        instance = self.moviedb.first()
-        if instance is None:
-            from .mdb import MovieDbTitle
-            instance = MovieDbTitle.populate_from_api(self.tconst)
-        return instance
+        if not hasattr(self, '_cached_moviedb'):
+            instance = self.moviedb.first()
+            if instance is None:
+                from .mdb import MovieDbTitle
+                instance = MovieDbTitle.populate_from_api(self.tconst)
+            self._cached_moviedb = instance
+        return self._cached_moviedb
 
     def get_tastedb(self):
-        instance = self.tastedb.first()
-        if instance is None:
-            from .tastedive import TasteTitle
-            instance = TasteTitle.populate_from_api(self.primaryTitle)
-        return instance
+        if not hasattr(self, '_cached_tastedb'):
+            instance = self.tastedb.first()
+            if instance is None:
+                from .tastedive import TasteTitle
+                instance = TasteTitle.populate_from_api(self.primaryTitle)
+                self._cached_tastedb = instance
+        return self._cached_tastedb
 
     def get_image_url(self):
         instance = self.get_rapid()
@@ -63,7 +69,7 @@ class Title(models.Model):
         instance = self.get_moviedb()
         if instance is not None and instance.backdrop_url != "":
             return instance.poster_url
-        return None
+        return self.get_image_url()
 
     def get_wikipedia_url(self):
         instance = self.get_tastedb()

@@ -51,12 +51,14 @@ class MovieDbTitle(models.Model):
             return
         pprint.pprint('MovieDbTitle tconst = %s' % tconst_string)
         data = MovieDbTitle.call_api('3/find/%s' % tconst_string, {'external_source': 'imdb_id'})
+        count = 0
         for result_type in ['movie_results', 'tv_results']:
             if result_type == 'movie_results':
                 titleType = 'movie'
             else:
                 titleType = 'tvSeries'
             for result in data[result_type]:
+                count += 1
                 pprint.pprint(result_type)
                 pprint.pprint(result)
                 try:
@@ -113,3 +115,5 @@ class MovieDbTitle(models.Model):
                 except Exception as e:
                     pprint.pprint(e)
                     pass
+        if count == 0:
+            pprint.pprint('MovieDbTitle tconst = %s ... no results' % tconst_string)

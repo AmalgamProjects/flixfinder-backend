@@ -36,6 +36,11 @@ class Seen(models.Model):
             models.UniqueConstraint(fields=['user', 'title'], name='Unique seen')
         ]
 
+    def get_primary_title(self):
+        if self.title is not None:
+            return self.title.primaryTitle
+        return None
+
     def get_backdrop_url(self):
         if self.title is not None:
             return self.title.get_backdrop_url()

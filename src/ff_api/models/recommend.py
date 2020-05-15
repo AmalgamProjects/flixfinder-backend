@@ -32,6 +32,11 @@ class Recommendation(models.Model):
     class Meta:
         ordering = ['user', 'priority']
 
+    def get_primary_title(self):
+        if self.title is not None:
+            return self.title.primaryTitle
+        return None
+
     def get_backdrop_url(self):
         if self.title is not None:
             return self.title.get_backdrop_url()
