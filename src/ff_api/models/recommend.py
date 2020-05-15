@@ -87,9 +87,15 @@ class Recommendation(models.Model):
 
         priority = 0
         for suggestion in suggestions:
-            r = Recommendation(user=user_instance, priority=priority, title=suggestion)
-            r.save()
-            priority += 1
+            if suggestion is None:
+                continue
+            # noinspection PyBroadException
+            try:
+                r = Recommendation(user=user_instance, priority=priority, title=suggestion)
+                r.save()
+                priority += 1
+            except Exception:
+                pass
 
     @staticmethod
     def random_good_movie():
