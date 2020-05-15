@@ -12,7 +12,7 @@ from ..permissions import IsOwner
 from ..serializers import RecommendationSerializer
 
 
-class RecommendationViewSet(viewsets.ModelViewSet):
+class RecommendationViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     """

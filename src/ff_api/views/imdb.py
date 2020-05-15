@@ -10,7 +10,6 @@ from rest_framework import viewsets
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-
 from ..models import \
     Genre, \
     Title, \
@@ -29,7 +28,7 @@ from ..serializers import \
     RatingSerializer
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Genre.objects.all().order_by('name')
     serializer_class = GenreSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -39,7 +38,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     ordering = ('name',)
 
 
-class TitleViewSet(viewsets.ModelViewSet):
+class TitleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Title.objects.all().order_by('primaryTitle')
     serializer_class = TitleSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -50,33 +49,33 @@ class TitleViewSet(viewsets.ModelViewSet):
     search_fields = ['primaryTitle', 'titleType']
     filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     filterset_fields = ['titleType']
-    
 
-class NameViewSet(viewsets.ModelViewSet):
+
+class NameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Name.objects.all()
     serializer_class = NameSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
 
-class CrewViewSet(viewsets.ModelViewSet):
+
+class CrewViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
-class EpisodeViewSet(viewsets.ModelViewSet):
+class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Episode.objects.all()
     serializer_class = EpisodeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
-class PrincipalViewSet(viewsets.ModelViewSet):
+class PrincipalViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Principal.objects.all()
     serializer_class = PrincipalSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
-class RatingViewSet(viewsets.ModelViewSet):
+class RatingViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
     permission_classes = [permissions.IsAuthenticated]
