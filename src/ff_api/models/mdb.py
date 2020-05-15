@@ -50,7 +50,6 @@ class MovieDbTitle(models.Model):
         if tconst_string[:2] != 'tt':
             return
         pprint.pprint('MovieDbTitle tconst = %s' % tconst_string)
-        image_base = 'http://image.tmdb.org/t/p/w500'
         data = MovieDbTitle.call_api('3/find/%s' % tconst_string, {'external_source': 'imdb_id'})
         for result_type in ['movie_results', 'tv_results']:
             if result_type == 'movie_results':
@@ -67,11 +66,16 @@ class MovieDbTitle(models.Model):
                         title = result['name']
                     backdrop_url = ''
                     if isinstance(result['backdrop_path'], str):
-                        backdrop_url = ''.join(
-                            (image_base, result['backdrop_path']))  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
+                        backdrop_url = ''.join((
+                            'http://image.tmdb.org/t/p/w1280',
+                            result['backdrop_path']
+                        ))
                     poster_url = ''
                     if isinstance(result['backdrop_path'], str):
-                        poster_url = ''.join((image_base, result['poster_path']))  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
+                        poster_url = ''.join((
+                            'http://image.tmdb.org/t/p/w780',
+                            result['poster_path']
+                        ))
 
                     instance, created = MovieDbTitle.objects.update_or_create(
                         title=title,
