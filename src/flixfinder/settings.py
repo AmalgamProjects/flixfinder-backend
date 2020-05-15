@@ -201,4 +201,5 @@ MDB_API_HOST = "https://api.themoviedb.org/"
 MDB_API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb"
 
 RAPID_API_HOST = "imdb8.p.rapidapi.com"  # must not be a URL
-RAPID_API_KEY = "f122227b79msh5596f9f95684992p1eadd8jsn453f2f9af865"
+# RAPID_API_KEY = "f122227b79msh5596f9f95684992p1eadd8jsn453f2f9af865" # Brian Key
+RAPID_API_KEY = "570c97ce3amsh4a783754d23bab6p1210f4jsn974b3d3ad149" # Dan Key

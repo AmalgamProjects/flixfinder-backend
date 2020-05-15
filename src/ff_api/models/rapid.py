@@ -68,17 +68,14 @@ class RapidTitle(models.Model):
                 },
             )
             if create_missing_title:
-                title_instance, created = Title.objects.get_or_create(
+                title_instance, created = Title.objects.update_or_create(
                     tconst=tconst_string,
                     defaults={
                         'tconst': tconst_string,
                         'titleType': data['titleType'],
-                        'primaryTitle': data['titleType'],
-                        'originalTitle': data['titleType'],
-                        'isAdult': '',
+                        'primaryTitle': data['title'],
+                        'originalTitle': data['title'],
                         'startYear': data['year'],
-                        'endYear': '',
-                        'runtimeMinutes': '',
                     }
                 )
             else:

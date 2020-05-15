@@ -35,6 +35,7 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
     poster_url = serializers.URLField(source="get_poster_url")
     wikipedia_url = serializers.URLField(source="get_wikipedia_url")
     youtube_url = serializers.URLField(source="get_youtube_url")
+    summary = serializers.CharField(source='get_summary')
 
     class Meta:
         model = Title
@@ -56,9 +57,10 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
             'poster_url',
             'wikipedia_url',
             'youtube_url',
-            'tastedb',
-            'moviedb',
-            'rapid',
+            'summary',
+            # 'tastedb',
+            # 'moviedb',
+            # 'rapid',
         ]
 
     def get_principals(self, instance):
