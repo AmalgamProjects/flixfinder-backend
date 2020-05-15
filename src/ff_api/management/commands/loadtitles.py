@@ -38,7 +38,8 @@ class Command(BaseCommand):
                     break
                 now = int(time.time())
                 if last_time < now:
-                    eta = int((number_rows - (count - ignore_rows_before)) / ((count - ignore_rows_before) / (now - start_time)))
+                    eta = int((number_rows - (count - ignore_rows_before)) / (
+                            (count - ignore_rows_before) / (now - start_time)))
                     if eta > 3600:
                         eta = str(int(eta / 3600)) + ' hours'
                     elif eta > 60:
@@ -53,30 +54,28 @@ class Command(BaseCommand):
                     last_time = now
                     last_count = count
                     last_dbcount = dbcount
-                try:
-                    titleType = row[1]
-                    release = int(row[6])
-                    running = int(row[7])
-                except Exception:
-                    continue
+                titleType = row[1]
                 # movie,short,titleType,tvEpisode,tvMiniSeries,tvMovie,tvSeries,tvShort,tvSpecial,video,videoGame
                 if titleType not in ['movie', 'tvMovie', 'tvSeries', 'tvMiniSeries']:
                     continue
-                if running < 15:
-                    continue
-                if titleType != 'movie' and release < 2000:
-                    continue
-                if titleType == 'movie' and release < 1980:
-                    continue
+                release = 0
                 try:
-                    genres = []
-                    for genre in row[8].split(','):
-                        try:
-                            result = Genre.objects.filter(name=genre).first()
-                        except Exception:
-                            result = Genre.objects.create(name=genre)
-                        genres.append(result)
-
+                    release = int(row[5])
+                    if titleType != 'movie' and release < 2000:
+                        continue
+                    if titleType == 'movie' and release < 1980:
+                        continue
+                except Exception as e:
+                    pass
+                try:
+                    release = int(row[6])
+                    if titleType != 'movie' and release < 2000:
+                        continue
+                    if titleType == 'movie' and release < 1980:
+                        continue
+                except Exception as e:
+                    pass
+                try:
                     dbcount += 1
                     title = Title.objects.create(
                         tconst=row[0],
@@ -89,7 +88,16 @@ class Command(BaseCommand):
                         runtimeMinutes=row[7]
                     )
                     title.save()
+
+                    genres = []
+                    for genre in row[8].split(','):
+                        try:
+                            result = Genre.objects.filter(name=genre).first()
+                        except Exception:
+                            result = Genre.objects.create(name=genre)
+                        genres.append(result)
                     title.genres.set(genres)
+
                     pprint.pprint("%s - Created   %12s %8s %s (%s)" % (count, row[0], row[1], row[2], release))
 
                 except Exception as e:
