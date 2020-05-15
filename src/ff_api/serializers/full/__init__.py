@@ -19,6 +19,9 @@ from .imdb import \
     PrincipalSerializer, \
     RatingSerializer
 
+from .recommend import \
+    RecommendationSerializer
+
 from .seen import \
     SeenSerializer
 

@@ -21,8 +21,20 @@ from .imdb import \
     Rating, \
     Genre
 
+from .mdb import \
+    MovieDbTitle
+
+from .rapid import \
+    RapidTitle
+
+from .recommend import \
+    Recommendation
+
 from .seen import \
     Seen
+
+from .tastedive import \
+    TasteTitle
 
 from .watch import \
     Watch

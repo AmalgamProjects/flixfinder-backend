@@ -20,8 +20,17 @@ admin.site.register(Principal)
 admin.site.register(Rating)
 admin.site.register(Genre)
 
+# mdb
+admin.site.register(MovieDbTitle)
+
+# rapid
+admin.site.register(RapidTitle)
+
 # seen
 admin.site.register(Seen)
+
+# tastedive
+admin.site.register(TasteTitle)
 
 # watch
 admin.site.register(Watch)

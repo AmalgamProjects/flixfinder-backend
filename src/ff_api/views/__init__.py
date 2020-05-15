@@ -21,6 +21,9 @@ from .imdb import \
     PrincipalViewSet, \
     RatingViewSet
 
+from .recommend import \
+    RecommendationViewSet
+
 from .seen import \
     SeenViewSet
 
