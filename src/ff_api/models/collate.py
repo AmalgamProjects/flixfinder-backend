@@ -25,3 +25,15 @@ def collate_title(query):
         # if isinstance(query, str):
         #     MovieDbTitle.populate_from_api(query)
         #     TasteTitle.populate_from_api(query)
+
+
+def collate_top_rated_movies():
+    data = RapidTitle.call_api('title/get-top-rated-movies', None)
+    # pprint.pprint(data)
+    for item in data:
+        tconst_string = item['id'].split('/')[2]
+        if not Title.objects.filter(tconst=tconst_string).exists():
+            RapidTitle.create_title_from_rapid(tconst_string)
+    for item in data:
+        tconst_string = item['id'].split('/')[2]
+        collate_title(tconst_string)

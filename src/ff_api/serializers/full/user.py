@@ -9,7 +9,8 @@ from ..shallow import \
     ShallowFavouriteSerializer, \
     ShallowFavouriteGenreSerializer, \
     ShallowSeenSerializer, \
-    ShallowWatchSerializer
+    ShallowWatchSerializer, \
+    ShallowRecommendationSerializer
 from ...models import User
 
 
@@ -17,14 +18,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     """
 
     """
-    # url = serializers.HyperlinkedIdentityField(
-    #     view_name='user-detail',
-    #     lookup_field='username'
-    # )
     favourites = ShallowFavouriteSerializer(many=True, read_only=True)
     favouriteGenres = ShallowFavouriteGenreSerializer(many=True, read_only=True, source='favourite_genres')
     seen = ShallowSeenSerializer(many=True, read_only=True)
     watch = ShallowWatchSerializer(many=True, read_only=True)
+    recommended = ShallowRecommendationSerializer(many=True, read_only=True, source='recommendation')
 
     class Meta:
         model = User
@@ -35,4 +33,5 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'favouriteGenres',
             'seen',
             'watch',
+            'recommended',
         ]

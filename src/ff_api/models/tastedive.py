@@ -11,7 +11,7 @@ from django.conf import settings
 from django.db import models
 from urllib.parse import quote_plus
 
-from .imdb import Title
+from .title import Title
 from ..fields import DateTimeFieldWithoutMicroseconds
 
 

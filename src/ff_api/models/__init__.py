@@ -3,7 +3,9 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 
 """
 
-from .collate import collate_title
+from .collate import \
+    collate_title, \
+    collate_top_rated_movies
 
 # noinspection PyUnresolvedReferences
 from django.contrib.auth.models import \
@@ -15,13 +17,11 @@ from .favourites import \
     FavouriteGenre
 
 from .imdb import \
-    Title, \
     Name, \
     Crew, \
     Episode, \
     Principal, \
-    Rating, \
-    Genre
+    Rating
 
 from .mdb import \
     MovieDbTitle
@@ -37,6 +37,10 @@ from .seen import \
 
 from .tastedive import \
     TasteTitle
+
+from .title import \
+    Title, \
+    Genre
 
 from .watch import \
     Watch

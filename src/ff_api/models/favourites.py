@@ -12,7 +12,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .imdb import Title, Genre
+from .title import Title, Genre
 from .recommend import Recommendation
 
 from ..fields import DateTimeFieldWithoutMicroseconds

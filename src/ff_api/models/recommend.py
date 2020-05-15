@@ -11,7 +11,7 @@ import pprint
 from django.contrib.auth.models import User
 from django.db import models
 
-from .imdb import Title
+from .title import Title
 
 from ..fields import DateTimeFieldWithoutMicroseconds
 

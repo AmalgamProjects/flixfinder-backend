@@ -11,7 +11,7 @@ from django.conf import settings
 from django.db import models
 from urllib.parse import quote_plus
 
-from .imdb import Title
+from .title import Title
 from ..fields import DateTimeFieldWithoutMicroseconds
 
 
@@ -53,9 +53,11 @@ class RapidTitle(models.Model):
         RapidTitle.populate_related_from_api(tconst_string)
 
     @staticmethod
-    def populate_one_from_api(tconst_string):
+    def populate_one_from_api(tconst_string, create_missing_title=True):
+        instance = None
         try:
             data = RapidTitle.call_api('title/get-base', {'tconst': tconst_string})
+            # pprint.pprint(data)
             instance, created = RapidTitle.objects.get_or_create(
                 remote_id=tconst_string,
                 defaults={
@@ -65,29 +67,46 @@ class RapidTitle(models.Model):
                     'remote_id': tconst_string,
                 },
             )
-            instance.tconst = Title.objects.filter(tconst=tconst_string).first()
+            if create_missing_title:
+                title_instance, created = Title.objects.get_or_create(
+                    tconst=tconst_string,
+                    defaults={
+                        'tconst': tconst_string,
+                        'titleType': data['titleType'],
+                        'primaryTitle': data['titleType'],
+                        'originalTitle': data['titleType'],
+                        'isAdult': '',
+                        'startYear': data['year'],
+                        'endYear': '',
+                        'runtimeMinutes': '',
+                    }
+                )
+            else:
+                title_instance = Title.objects.filter(tconst=tconst_string).first()
+            instance.tconst = title_instance
             instance.save()
             pprint.pprint('RapidTitle %s ... %s' % (data['title'], instance.tconst))
         except Exception as e:
             pprint.pprint(e)
-            pass
+        return instance
 
     @staticmethod
     def populate_related_from_api(tconst_string):
         instance = RapidTitle.objects.filter(remote_id=tconst_string).first()
         if not instance:
-            RapidTitle.populate_one_from_api(tconst_string)
+            RapidTitle.populate_one_from_api(tconst_string, create_missing_title=False)
             instance = RapidTitle.objects.filter(remote_id=tconst_string).first()
             if not instance:
                 return
-        data = RapidTitle.call_api('title/get-more-like-this', {'tconst': tconst_string})
-        # pprint.pprint(data)
-        for ref in data:
-            related_tconst = ref.split('/')[2]
-            RapidTitle.populate_one_from_api(related_tconst)
-            related_title = Title.objects.filter(tconst=related_tconst).first()
-            if related_title:
-                instance.similar.add(related_title)
+        if instance.tconst is not None:
+            data = RapidTitle.call_api('title/get-more-like-this', {'tconst': tconst_string})
+            # pprint.pprint(data)
+            for ref in data:
+                related_tconst = ref.split('/')[2]
+                RapidTitle.populate_one_from_api(related_tconst, create_missing_title=False)
+                related_title = Title.objects.filter(tconst=related_tconst).first()
+                if related_title:
+                    instance.similar.add(related_title)
 
     @staticmethod
     def populate_top_rated_movies():
@@ -96,3 +115,11 @@ class RapidTitle(models.Model):
         for item in data:
             tconst_string = item['id'].split('/')[2]
             RapidTitle.populate_from_api(tconst_string)
+
+    @staticmethod
+    def create_title_from_rapid(tconst_string):
+        instance_rapid = RapidTitle.objects.filter(tconst=tconst_string).first()
+        instance_title = Title.objects.filter(tconst=tconst_string).first()
+        if instance_rapid is None or instance_title is None:
+            pprint.pprint('Generating missing Title for %s' % tconst_string)
+            RapidTitle.populate_one_from_api(tconst_string, create_missing_title=True)
