@@ -8,6 +8,8 @@ from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import viewsets
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 from ..models import \
     Genre, \
@@ -45,8 +47,9 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_fields = ('titleType', 'primaryTitle', 'genres')
     ordering_fields = ('primaryTitle')
     ordering = ('primaryTitle',)
-    search_fields = ['primaryTitle']
-    filter_backends = (filters.SearchFilter,)
+    search_fields = ['primaryTitle', 'titleType']
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_fields = ['titleType']
     
 
 class NameViewSet(viewsets.ModelViewSet):
