@@ -20,12 +20,21 @@ from .imdb import \
     EpisodeViewSet, \
     PrincipalViewSet, \
     RatingViewSet
+    
+from .mdb import \
+    MovieDbTitleViewSet
 
+from .rapid import \
+    RapidTitleViewSet
+    
 from .recommend import \
     RecommendationViewSet
 
 from .seen import \
     SeenViewSet
 
+from .tastedive import \
+    TasteTitleViewSet
+    
 from .watch import \
     WatchViewSet

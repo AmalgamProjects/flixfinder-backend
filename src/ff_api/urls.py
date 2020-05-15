@@ -23,7 +23,10 @@ router.register(r'episode', views.EpisodeViewSet)
 router.register(r'principal', views.PrincipalViewSet)
 router.register(r'rating', views.RatingViewSet)
 router.register(r'seen', views.SeenViewSet)
-router.register(r'watch', views.WatchViewSet )
+router.register(r'watch', views.WatchViewSet)
+router.register(r'moviedbtitle', views.MovieDbTitleViewSet)
+router.register(r'rapidtitle', views.RapidTitleViewSet)
+router.register(r'tastetitle', views.TasteTitleViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

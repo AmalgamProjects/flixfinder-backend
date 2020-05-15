@@ -50,6 +50,8 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
             'numVotes',
             'directors',
             'writers',
+            'moviedb',
+            'rapid',
         ]
         
     def get_principals(self, instance):
@@ -94,6 +96,7 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
                 nameSerializer = NameSerializer(writer, context=self.context)
                 result.append(nameSerializer.data)
         return result
+    
     
 
 class NameSerializer(serializers.HyperlinkedModelSerializer):

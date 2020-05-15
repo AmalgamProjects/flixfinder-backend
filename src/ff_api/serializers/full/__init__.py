@@ -18,13 +18,22 @@ from .imdb import \
     EpisodeSerializer, \
     PrincipalSerializer, \
     RatingSerializer
+    
+from .mdb import \
+    MovieDbTitleSerializer
 
+from .rapid import \
+    RapidTitleSerializer
+    
 from .recommend import \
     RecommendationSerializer
 
 from .seen import \
     SeenSerializer
 
+from .tastedive import \
+    TasteTitleSerializer
+    
 from .user import \
     UserSerializer
 
