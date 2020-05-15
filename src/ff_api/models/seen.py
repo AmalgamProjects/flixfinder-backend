@@ -25,3 +25,8 @@ class Seen(models.Model):
         related_name='seen',
     )
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'title'], name='Unique seen')
+        ]

@@ -30,7 +30,6 @@ class FavouriteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Favourite
         fields = ['id', 'user', 'title']
-        unique_together = ('user', 'title')
 
 
 class FavouriteGenreSerializer(serializers.HyperlinkedModelSerializer):
@@ -52,4 +51,3 @@ class FavouriteGenreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FavouriteGenre
         fields = ['id', 'user', 'genre']
-        unique_together = ('user', 'genre')

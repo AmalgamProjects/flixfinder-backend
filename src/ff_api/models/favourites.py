@@ -25,6 +25,11 @@ class Favourite(models.Model):
         related_name='favourites',
     )
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'title'], name='Unique favourite')
+        ]
 
 
 class FavouriteGenre(models.Model):
@@ -37,3 +42,8 @@ class FavouriteGenre(models.Model):
         related_name='favourite_genres',
     )
     genre = models.ForeignKey(Genre, verbose_name="name", on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'genre'], name='Unique favourite genre')
+        ]

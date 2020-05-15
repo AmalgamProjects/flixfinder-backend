@@ -25,3 +25,8 @@ class Watch(models.Model):
         related_name='watch',
     )
     title = models.ForeignKey(Title, verbose_name="tconst", on_delete=models.CASCADE)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'title'], name='Unique watch')
+        ]
