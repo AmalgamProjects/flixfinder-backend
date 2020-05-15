@@ -56,7 +56,7 @@ class TasteTitle(models.Model):
                     youtube_url = ''
                     if result['yUrl'] is not None:
                         youtube_url = result['yUrl']  # 'https://www.youtube-nocookie.com/embed/PnmTi7hSjrA'
-                    instance, created = TasteTitle.objects.get_or_create(
+                    instance, created = TasteTitle.objects.update_or_create(
                         name=name,
                         defaults={
                             'name': name,  # 'Primal Fear'

@@ -51,12 +51,12 @@ class MovieDbTitle(models.Model):
 
                 backdrop_url = ''
                 if isinstance(result['backdrop_path'], str):
-                    backdrop_url = image_base + result['backdrop_path'],  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
+                    backdrop_url = ''.join((image_base, result['backdrop_path']))  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
                 poster_url = ''
                 if isinstance(result['backdrop_path'], str):
-                    poster_url = image_base + result['poster_path'],  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
+                    poster_url = ''.join((image_base, result['poster_path']))  # '/3guCfwRt3MrmO6q56I4F5xN1LYB.jpg'
 
-                instance, created = MovieDbTitle.objects.get_or_create(
+                instance, created = MovieDbTitle.objects.update_or_create(
                     title=title,
                     defaults={
                         'title': title,  # "Ocean's Twelve"
