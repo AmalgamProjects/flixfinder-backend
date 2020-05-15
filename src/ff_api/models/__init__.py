@@ -7,6 +7,9 @@ from .collate import \
     collate_title, \
     collate_top_rated_movies
 
+from .external import \
+    ExternalResponse
+
 # noinspection PyUnresolvedReferences
 from django.contrib.auth.models import \
     User, \

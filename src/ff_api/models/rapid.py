@@ -4,13 +4,12 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 """
 
 import uuid
-import requests
 import pprint
 
 from django.conf import settings
 from django.db import models
-from urllib.parse import quote_plus
 
+from .external import ExternalResponse
 from .title import Title
 from ..fields import DateTimeFieldWithoutMicroseconds
 
@@ -28,11 +27,11 @@ class RapidTitle(models.Model):
     similar = models.ManyToManyField(Title, related_name='rapid_similar')
 
     def __str__(self):
-        return 'Rapid: %s' % self.title
+        return 'Rapid: %s %s' % (self.remote_id, self.title)
 
     @staticmethod
     def call_api(method, params=None):
-        response = requests.get(
+        return ExternalResponse.call_api_url(
             'https://%s/%s' % (settings.RAPID_API_HOST, method),
             headers={
                 'x-rapidapi-host': settings.RAPID_API_HOST,
@@ -41,8 +40,6 @@ class RapidTitle(models.Model):
             },
             params=params
         )
-        response.raise_for_status()
-        return response.json()
 
     @staticmethod
     def populate_from_api(tconst_string):

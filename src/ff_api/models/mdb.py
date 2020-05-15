@@ -4,13 +4,13 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 """
 
 import datetime
-import uuid
-import requests
 import pprint
+import uuid
 
 from django.conf import settings
 from django.db import models
 
+from .external import ExternalResponse
 from .title import Title
 from ..fields import DateTimeFieldWithoutMicroseconds
 
@@ -38,12 +38,10 @@ class MovieDbTitle(models.Model):
         if params is None:
             params = {}
         params['api_key'] = settings.MDB_API_KEY
-        response = requests.get(
+        return ExternalResponse.call_api_url(
             'https://%s/%s' % (settings.MDB_API_HOST, method),
             params=params
         )
-        response.raise_for_status()
-        return response.json()
 
     @staticmethod
     def populate_from_api(tconst_string, create_missing_title=True):
@@ -59,8 +57,8 @@ class MovieDbTitle(models.Model):
                 titleType = 'tvSeries'
             for result in data[result_type]:
                 count += 1
-                pprint.pprint(result_type)
-                pprint.pprint(result)
+                # pprint.pprint(result_type)
+                # pprint.pprint(result)
                 try:
                     if 'title' in result:
                         title = result['title']

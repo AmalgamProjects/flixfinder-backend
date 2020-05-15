@@ -4,13 +4,13 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 """
 
 import uuid
-import requests
 import pprint
 
 from django.conf import settings
 from django.db import models
 from urllib.parse import quote_plus
 
+from .external import ExternalResponse
 from .title import Title
 from ..fields import DateTimeFieldWithoutMicroseconds
 
@@ -30,19 +30,22 @@ class TasteTitle(models.Model):
         return 'TasteDive: %s - %s' % (self.type, self.name)
 
     @staticmethod
-    def populate_from_api(query):
+    def call_api(method, params=None):
         """
         https://tastedive.com/read/api
         """
+        if params is None:
+            params = {}
+        params['k'] = settings.TD_API_KEY
+        return ExternalResponse.call_api_url(
+            'https://%s/api/%s' % (settings.TD_API_HOST, method),
+            params=params
+        )
+
+    @staticmethod
+    def populate_from_api(query):
         pprint.pprint('TasteTitle query = %s' % query)
-        response = requests.get(
-            '%s/similar?k=%s&q=%s&info=1' % (
-                settings.TD_API_HOST,
-                settings.TD_API_KEY,
-                quote_plus(query)
-            ))
-        response.raise_for_status()
-        data = response.json()
+        data = TasteTitle.call_api('similar', {'info': 1, 'q': query})
         for result_type in ['Info', 'Results']:
             for result in data['Similar'][result_type]:
                 # noinspection PyBroadException
