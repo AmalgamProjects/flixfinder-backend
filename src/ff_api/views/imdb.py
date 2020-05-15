@@ -40,7 +40,7 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TitleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Title.objects.all().order_by('-endYear', '-startYear', 'primaryTitle')
+    queryset = Title.objects.all().order_by('primaryTitle', 'startYear', 'endYear')
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'tconst'
     filter_fields = ('titleType', 'primaryTitle', 'genres')
