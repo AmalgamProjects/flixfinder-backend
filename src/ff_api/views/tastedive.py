@@ -12,10 +12,10 @@ from ..models import TasteTitle
 from ..serializers import TasteTitleSerializer
 
 
-class TasteTitleViewSet(viewsets.ModelViewSet):
+class TasteTitleViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     queryset = TasteTitle.objects.all()
     serializer_class = TasteTitleSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser, ]

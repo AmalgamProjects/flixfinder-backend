@@ -12,10 +12,10 @@ from ..models import MovieDbTitle
 from ..serializers import MovieDbTitleSerializer
 
 
-class MovieDbTitleViewSet(viewsets.ModelViewSet):
+class MovieDbTitleViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     queryset = MovieDbTitle.objects.all()
     serializer_class = MovieDbTitleSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser, ]

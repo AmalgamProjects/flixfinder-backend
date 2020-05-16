@@ -12,10 +12,10 @@ from ..models import RapidTitle
 from ..serializers import RapidTitleSerializer
 
 
-class RapidTitleViewSet(viewsets.ModelViewSet):
+class RapidTitleViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     queryset = RapidTitle.objects.all()
     serializer_class = RapidTitleSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser, ]
