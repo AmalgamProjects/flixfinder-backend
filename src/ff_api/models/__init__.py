@@ -21,7 +21,6 @@ from .favourites import \
     FavouriteGenre
 
 from .imdb import \
-    Name, \
     Crew, \
     Episode, \
     Principal, \
@@ -29,6 +28,9 @@ from .imdb import \
 
 from .mdb import \
     MovieDbTitle
+
+from .name import \
+    Name
 
 from .rapid import \
     RapidTitle

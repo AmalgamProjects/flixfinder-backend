@@ -87,7 +87,6 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
             name_data['job'] = self._no_fake_null(principal_data['job'])
             name_data['category'] = self._no_fake_null(principal_data['category'])
             name_data['characters'] = self._fixup_characters(principal_data['characters'])
-            name_data['image_url'] = None
             result.append(name_data)
         return result
 

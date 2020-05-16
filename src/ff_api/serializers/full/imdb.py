@@ -27,9 +27,11 @@ class NameSerializer(serializers.HyperlinkedModelSerializer):
     #    view_name='principal-detail'
     # )
 
+    image_url = serializers.URLField(source="get_image_url", read_only=True)
+
     class Meta:
         model = Name
-        fields = ['primaryName', 'birthYear', 'deathYear']
+        fields = ['primaryName', 'birthYear', 'deathYear', 'image_url']
 
 
 class CrewSerializer(serializers.HyperlinkedModelSerializer):

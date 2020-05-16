@@ -13,16 +13,7 @@ NOTICE: This data is obtained under a Non-Commercial Use License
 from django.db import models
 
 from .title import Title
-from ..fields import SeparatedValuesField
-
-
-class Name(models.Model):
-    nconst = models.CharField(primary_key=True, max_length=255)
-    primaryName = models.CharField(max_length=255, db_index=True)
-    birthYear = models.IntegerField(null=True)
-    deathYear = models.IntegerField(null=True)
-    primaryProfession = SeparatedValuesField(default="", blank=True, null=True)
-    knownForTitles = models.ManyToManyField(Title, blank=True)
+from .name import Name
 
 
 class Crew(models.Model):
