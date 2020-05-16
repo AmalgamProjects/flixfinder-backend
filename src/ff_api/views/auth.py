@@ -18,11 +18,17 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner,)
+    permission_classes = (permissions.IsAuthenticated,)
     lookup_field = 'username'
     filter_fields = ('username', 'email',)
     ordering_fields = ('username', 'email',)
     ordering = ('email',)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            return queryset.none()
+        return queryset.filter(username=self.request.user.username)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
