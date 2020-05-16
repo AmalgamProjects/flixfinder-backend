@@ -128,8 +128,7 @@ class Recommendation(models.Model):
             suggestions = suggestions[:100]
 
         pprint.pprint('deleting old suggestions')
-        for old_suggestion in user_instance.recommendation.get_queryset().all():
-            old_suggestion.delete()
+        user_instance.recommendation.get_queryset().all().delete()
 
         pprint.pprint('saving new suggestions')
 

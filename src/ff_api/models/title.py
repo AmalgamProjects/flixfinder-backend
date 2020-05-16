@@ -37,6 +37,10 @@ class Title(models.Model):
     vote_average = models.FloatField(default=0.0)
     vote_count = models.IntegerField(default=0)
 
+    api_cached_rapid = models.BooleanField(default=False)
+    api_cached_moviedb = models.BooleanField(default=False)
+    api_cached_tastedb = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['primaryTitle', 'startYear', 'endYear']
 
@@ -73,60 +77,89 @@ class Title(models.Model):
             self._cached_tastedb = instance
         return self._cached_tastedb
 
+    def _cache_rapid_data(self):
+        if not self.api_cached_rapid:
+            if self.image_url is None or self.image_url == "":
+                instance = self.get_rapid()
+                if instance is not None and instance.image_url != "":
+                    self.image_url = instance.image_url
+            self.api_cached_rapid = True
+            self.save()
+
+    def _cache_moviedb_data(self):
+        if not self.api_cached_moviedb:
+            instance = None
+            if self.backdrop_url is None or self.backdrop_url == "":
+                instance = instance or self.get_moviedb()
+                if instance is not None and instance.backdrop_url != "":
+                    self.backdrop_url = instance.backdrop_url
+            if self.poster_url is None or self.poster_url == "":
+                instance = instance or self.get_moviedb()
+                if instance is not None and instance.poster_url != "":
+                    self.poster_url = instance.poster_url
+            if self.summary is None or self.summary == "":
+                instance = instance or self.get_moviedb()
+                if instance is not None and instance.overview != "":
+                    self.summary = instance.overview
+            if self.vote_average <= 0.0:
+                instance = instance or self.get_moviedb()
+                if instance is not None and instance.vote_average != "":
+                    self.vote_average = instance.vote_average
+            if self.vote_count <= 0:
+                instance = instance or self.get_moviedb()
+                if instance is not None and instance.vote_average != "":
+                    self.vote_count = instance.vote_count
+            self.api_cached_moviedb = True
+            self.save()
+
+    def _cache_tastedb_data(self):
+        if not self.api_cached_tastedb:
+            instance = None
+            if self.wikipedia_url is None or self.wikipedia_url == "":
+                instance = instance or self.get_tastedb()
+                if instance is not None and instance.wikipedia != "":
+                    self.wikipedia_url = instance.wikipedia
+            if self.youtube_url is None or self.youtube_url == "":
+                instance = instance or self.get_tastedb()
+                if instance is not None and instance.youtube != "":
+                    self.youtube_url = instance.youtube
+            if self.summary is None or self.summary == "":
+                instance = instance or self.get_tastedb()
+                if instance is not None and instance.teaser != "":
+                    self.summary = instance.teaser
+            self.api_cached_tastedb = True
+            self.save()
+
     def get_image_url(self):
         if self.image_url is None or self.image_url == "":
-            instance = self.get_rapid()
-            if instance is not None and instance.image_url != "":
-                self.image_url = instance.image_url
-                self.save()
+            self._cache_rapid_data()
         return self.image_url
 
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
-            instance = self.get_moviedb()
-            if instance is not None and instance.backdrop_url != "":
-                self.backdrop_url = instance.backdrop_url
-                self.save()
+            self._cache_moviedb_data()
         return self.backdrop_url
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
-            instance = self.get_moviedb()
-            if instance is not None and instance.poster_url != "":
-                self.poster_url = instance.poster_url
-            if self.poster_url is None or self.poster_url == "":
-                self.poster_url = self.get_image_url()
-            if self.poster_url is not None or self.poster_url != "":
-                self.save()
+            self._cache_moviedb_data()
         return self.poster_url
 
     def get_wikipedia_url(self):
         if self.wikipedia_url is None or self.wikipedia_url == "":
-            instance = self.get_tastedb()
-            if instance is not None and instance.wikipedia != "":
-                self.wikipedia_url = instance.wikipedia
-                self.save()
+            self._cache_tastedb_data()
         return self.wikipedia_url
 
     def get_youtube_url(self):
         if self.youtube_url is None or self.youtube_url == "":
-            instance = self.get_tastedb()
-            if instance is not None and instance.youtube != "":
-                self.youtube_url = instance.youtube
-                self.save()
+            self._cache_tastedb_data()
         return self.youtube_url
 
     def get_summary(self):
         if self.summary is None or self.summary == "":
-            mdb = self.get_moviedb()
-            if mdb is not None and mdb.overview != "":
-                self.summary = mdb.overview
-            if self.summary is None or self.summary == "":
-                tdb = self.get_tastedb()
-                if tdb is not None and tdb.teaser != "":
-                    self.summary = tdb.teaser
-            if self.summary is not None and self.summary != "":
-                self.save()
+            self._cache_moviedb_data()
+        if self.summary is None or self.summary == "":
+            self._cache_tastedb_data()
         return self.summary
 
     def get_vote_average(self):
@@ -135,10 +168,7 @@ class Title(models.Model):
                 self.vote_average = self.rating.first().averageRating
                 self.save()
             except Exception:
-                instance = self.get_moviedb()
-                if instance is not None and instance.vote_average != "":
-                    self.vote_average = instance.vote_average
-                    self.save()
+                self._cache_moviedb_data()
         return self.vote_average
 
     def get_vote_count(self):
@@ -147,10 +177,7 @@ class Title(models.Model):
                 self.vote_count = self.rating.first().numVotes
                 self.save()
             except Exception:
-                instance = self.get_moviedb()
-                if instance is not None and instance.vote_average != "":
-                    self.vote_count = instance.vote_count
-                    self.save()
+                self._cache_moviedb_data()
         return self.vote_count
 
     def __str__(self):
