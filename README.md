@@ -1,4 +1,13 @@
 
+# flixfinder
+
+This project has three github repos
+
+ - https://github.com/AmalgamProjects/flixfinder-backend
+ - https://github.com/AmalgamProjects/flixfinder-frontend
+ - https://github.com/AmalgamProjects/flixfinder-deploy
+
+
 # flixfinder-backend
 
 Backend for flixfinder app written using Python 3 and Django 2.
