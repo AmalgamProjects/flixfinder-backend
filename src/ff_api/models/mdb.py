@@ -68,13 +68,13 @@ class MovieDbTitle(models.Model):
                     backdrop_url = ''
                     if isinstance(result['backdrop_path'], str):
                         backdrop_url = ''.join((
-                            'http://image.tmdb.org/t/p/w1280',
+                            'https://image.tmdb.org/t/p/w1280',
                             result['backdrop_path']
                         ))
                     poster_url = ''
                     if isinstance(result['backdrop_path'], str):
                         poster_url = ''.join((
-                            'http://image.tmdb.org/t/p/w780',
+                            'https://image.tmdb.org/t/p/w780',
                             result['poster_path']
                         ))
 
