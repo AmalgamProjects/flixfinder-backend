@@ -112,6 +112,8 @@ class MovieDbTitle(models.Model):
                         title_instance = Title.objects.filter(tconst=tconst_string).first()
                     instance.tconst = title_instance
                     instance.save()
+                    # noinspection PyProtectedMember
+                    instance.tconst._cache_moviedb_data()
                     pprint.pprint('MovieDbTitle %s ... %s' % (title, instance.tconst))
                 except Exception as e:
                     pprint.pprint(e)

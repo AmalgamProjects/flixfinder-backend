@@ -40,7 +40,7 @@ def collate_title(query):
 
 def collate_top_rated_movies():
     data = RapidTitle.call_api('title/get-top-rated-movies', None)
-    pprint.pprint(data)
+    # pprint.pprint(data)
     for item in data:
         tconst_string = item['id'].split('/')[2]
         if not Title.objects.filter(tconst=tconst_string).exists():
