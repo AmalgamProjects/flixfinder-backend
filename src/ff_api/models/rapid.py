@@ -47,7 +47,7 @@ class RapidTitle(models.Model):
         https://rapidapi.com/apidojo/api/imdb8/endpoints
         """
         instance = RapidTitle.populate_one_from_api(tconst_string)
-        RapidTitle.populate_related_from_api(tconst_string)
+        RapidTitle.populate_related_from_api(tconst_string, instance)
         return instance
 
     @staticmethod
@@ -60,6 +60,9 @@ class RapidTitle(models.Model):
             image_url = ''
             if 'image' in data and 'url' in data['image']:
                 image_url = data['image']['url']
+            start_year = ''
+            if 'year' in data:
+                start_year = data['year']
             instance, created = RapidTitle.objects.get_or_create(
                 remote_id=tconst_string,
                 defaults={
@@ -77,7 +80,7 @@ class RapidTitle(models.Model):
                         'titleType': data['titleType'],
                         'primaryTitle': data['title'],
                         'originalTitle': data['title'],
-                        'startYear': data['year'],
+                        'startYear': start_year,
                     }
                 )
             else:
@@ -90,22 +93,29 @@ class RapidTitle(models.Model):
         return instance
 
     @staticmethod
-    def populate_related_from_api(tconst_string):
-        instance = RapidTitle.objects.filter(remote_id=tconst_string).first()
-        if not instance:
+    def populate_related_from_api(tconst_string, rapid_instance=None):
+        if not rapid_instance:
+            rapid_instance = RapidTitle.objects.filter(remote_id=tconst_string).first()
+        if not rapid_instance:
             RapidTitle.populate_one_from_api(tconst_string, create_missing_title=False)
-            instance = RapidTitle.objects.filter(remote_id=tconst_string).first()
-            if not instance:
+            rapid_instance = RapidTitle.objects.filter(remote_id=tconst_string).first()
+            if not rapid_instance:
                 return
-        if instance.tconst is not None:
+        if rapid_instance.tconst:
+            pprint.pprint('RapidTitle MORE LIKE tconst = %s' % tconst_string)
             data = RapidTitle.call_api('title/get-more-like-this', {'tconst': tconst_string})
+            pprint.pprint(
+                'RapidTitle MORE LIKE tconst = %s has %s results' % (
+                    tconst_string,
+                    len(data)
+                ))
             # pprint.pprint(data)
             for ref in data:
                 related_tconst = ref.split('/')[2]
-                RapidTitle.populate_one_from_api(related_tconst, create_missing_title=False)
-                related_title = Title.objects.filter(tconst=related_tconst).first()
-                if related_title:
-                    instance.similar.add(related_title)
+                new_instance = RapidTitle.populate_one_from_api(related_tconst, create_missing_title=False)
+                if new_instance.tconst:
+                    rapid_instance.similar.add(new_instance.tconst)
+        return rapid_instance
 
     @staticmethod
     def populate_top_rated_movies():

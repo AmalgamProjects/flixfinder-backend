@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from .title import Title
+from .rapid import RapidTitle
 
 from ..fields import DateTimeFieldWithoutMicroseconds
 
@@ -50,45 +51,77 @@ class Recommendation(models.Model):
     @staticmethod
     def _get_suggestions_from_list_item(item_instance):
         suggestions = []
-        rapid_title = item_instance.title.get_rapid()
-        if rapid_title is not None:
-            for title_instance in rapid_title.similar.all():
+        rapid_instance = item_instance.title.get_rapid()
+        if rapid_instance is not None:
+            if rapid_instance.similar.all().count() <= 0:
+                rapid_instance = RapidTitle.populate_related_from_api(item_instance.title.tconst, rapid_instance)
+            for title_instance in rapid_instance.similar.all():
                 suggestions.append(title_instance)
         random.shuffle(suggestions)
         return suggestions
 
     @staticmethod
+    def _remove_duplicate_suggestions(suggestions):
+        result = []
+        for item in suggestions:
+            if not item:
+                continue
+            tconst_string = item.tconst
+            duplicate = False
+            for kept in result:
+                if kept.tconst == tconst_string:
+                    duplicate = True
+                    break
+            if not duplicate:
+                result.append(item)
+        return result
+
+    @staticmethod
     def update_recommendations_for_user(user_instance: User):
+
+        pprint.pprint('user has %s suggestions' % user_instance.recommendation.get_queryset().count())
 
         suggestions = []
 
         if len(suggestions) < 100:
+            pprint.pprint('making suggestions from favourites')
             for favourite in user_instance.favourites.all():
                 suggestions += Recommendation._get_suggestions_from_list_item(favourite)
 
+        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
         if len(suggestions) < 100:
+            pprint.pprint('making suggestions from watch')
             for want_to_watch in user_instance.watch.all():
                 suggestions += Recommendation._get_suggestions_from_list_item(want_to_watch)
 
+        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
         if len(suggestions) < 100:
+            pprint.pprint('making suggestions from seen')
             for already_seen in user_instance.seen.all():
                 if already_seen.liked and not already_seen.disliked:
                     suggestions += Recommendation._get_suggestions_from_list_item(already_seen)
 
+        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
         if len(suggestions) < 100:
+            pprint.pprint('making suggestions from seen')
             for already_seen in user_instance.seen.all():
                 if not already_seen.liked and not already_seen.disliked:
                     suggestions += Recommendation._get_suggestions_from_list_item(already_seen)
 
         # TODO use the data from user_instance.favourite_genres.all()
 
-        while len(suggestions) < 100:
-            suggestions.append(Recommendation.random_good_movie())
+        pprint.pprint('making random suggestions')
+        suggestions += Recommendation.random_good_movies(100 - len(suggestions))
+        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
 
         if len(suggestions) > 100:
             suggestions = suggestions[:100]
 
-        user_instance.recommendation.set([], clear=True)
+        pprint.pprint('deleting old suggestions')
+        for old_suggestion in user_instance.recommendation.get_queryset().all():
+            old_suggestion.delete()
+
+        pprint.pprint('saving new suggestions')
 
         priority = 0
         for suggestion in suggestions:
@@ -103,12 +136,15 @@ class Recommendation(models.Model):
                 pass
 
     @staticmethod
-    def random_good_movie():
-        return Title.objects.filter(tconst=Recommendation.random_good_movie_tconst()).first()
+    def random_good_movies(number=1):
+        result = []
+        for tconst in Recommendation.random_good_movie_tconsts(number):
+            result.append(Title.objects.filter(tconst=tconst).first())
+        return result
 
     @staticmethod
-    def random_good_movie_tconst():
-        random.choice([
+    def random_good_movie_tconsts(number=1):
+        return random.sample([
             'tt0111161',
             'tt0068646',
             'tt0071562',
@@ -209,4 +245,4 @@ class Recommendation(models.Model):
             'tt2106476',
             'tt0093058',
             'tt0053125',
-        ])
+        ], number)

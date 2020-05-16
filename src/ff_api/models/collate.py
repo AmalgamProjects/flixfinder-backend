@@ -34,7 +34,8 @@ def collate_title(query):
     if isinstance(tconst_string, str) and tconst_string != '':
         rapid_instance = RapidTitle.populate_from_api(tconst_string)
         MovieDbTitle.populate_from_api(tconst_string)
-        TasteTitle.populate_from_api(rapid_instance.title)
+        if rapid_instance is not None:
+            TasteTitle.populate_from_api(rapid_instance.title)
 
 
 def collate_top_rated_movies():

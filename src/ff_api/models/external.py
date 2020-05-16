@@ -26,16 +26,12 @@ class ExternalResponse(models.Model):
 
     @staticmethod
     def call_api_url(url, headers=None, params=None):
-        if params is None:
-            params = {}
-        params['api_key'] = settings.MDB_API_KEY
+        started = time.time()
         prepared = requests.Request('GET', url, headers=headers, params=params).prepare()
         instance = ExternalResponse.objects.filter(query=prepared.url).first()
         if instance is None:
-            pprint.pprint('making real api call')
-            started = time.time()
             with requests.Session() as session:
-                response = session.send(prepared)
+                response = session.send(prepared, timeout=4)
                 response.raise_for_status()
                 instance = ExternalResponse(
                     query=prepared.url,
@@ -44,5 +40,5 @@ class ExternalResponse(models.Model):
                 instance.save()
             pprint.pprint('api call took %s seconds' % (time.time() - started))
         else:
-            pprint.pprint('using cached api response')
+            pprint.pprint('api cached response took %s seconds' % (time.time() - started))
         return json.loads(instance.response)

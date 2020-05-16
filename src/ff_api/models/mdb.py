@@ -43,6 +43,7 @@ class MovieDbTitle(models.Model):
             params=params
         )
 
+    # noinspection PyBroadException
     @staticmethod
     def populate_from_api(tconst_string, create_missing_title=True):
         if tconst_string[:2] != 'tt':
@@ -90,10 +91,12 @@ class MovieDbTitle(models.Model):
                     )
                     if create_missing_title:
                         if 'release_date' in result:
-                            release_date = datetime.datetime.strptime(result['release_date'], '%Y-%m-%d')
-                            start_year = str(release_date.year)
+                            try:
+                                release_date = datetime.datetime.strptime(result['release_date'], '%Y-%m-%d')
+                                start_year = str(release_date.year)
+                            except Exception:
+                                start_year = ''
                         else:
-                            release_date = None
                             start_year = ''
                         title_instance, created = Title.objects.update_or_create(
                             tconst=tconst_string,
@@ -113,5 +116,5 @@ class MovieDbTitle(models.Model):
                 except Exception as e:
                     pprint.pprint(e)
                     pass
-        if count == 0:
-            pprint.pprint('MovieDbTitle tconst = %s ... no results' % tconst_string)
+        # if count == 0:
+        #     pprint.pprint('MovieDbTitle tconst = %s ... no results' % tconst_string)
