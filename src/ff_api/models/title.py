@@ -133,16 +133,23 @@ class Title(models.Model):
     def get_image_url(self):
         if self.image_url is None or self.image_url == "":
             self._cache_rapid_data()
-        return self.image_url
+        if self.image_url is None or self.image_url == "":
+            return self.poster_url
+        else:
+            return self.image_url
 
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
             self._cache_moviedb_data()
+        if self.backdrop_url is None or self.backdrop_url == "":
+            return self.get_image_url()
         return self.backdrop_url
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
             self._cache_moviedb_data()
+        if self.poster_url is None or self.poster_url == "":
+            return self.get_image_url()
         return self.poster_url
 
     def get_wikipedia_url(self):
