@@ -21,8 +21,7 @@ from .imdb import \
     PrincipalViewSet, \
     RatingViewSet
     
-from .mdb import \
-    MovieDbTitleViewSet
+from .mdb import *
 
 from .rapid import \
     RapidTitleViewSet

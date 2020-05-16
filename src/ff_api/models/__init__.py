@@ -5,7 +5,8 @@ https://docs.djangoproject.com/en/2.2/topics/db/models/
 
 from .collate import \
     collate_title, \
-    collate_top_rated_movies
+    collate_top_rated_movies, \
+    collate_hard_coded
 
 from .external import \
     ExternalResponse
