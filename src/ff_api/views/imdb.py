@@ -22,6 +22,7 @@ from ..serializers import \
     GenreSerializer, \
     TitleSerializer, \
     ShallowTitleSerializer, \
+    VeryShallowTitleSerializer, \
     NameSerializer, \
     CrewSerializer, \
     EpisodeSerializer, \
@@ -52,6 +53,10 @@ class TitleViewSet(viewsets.ReadOnlyModelViewSet):
     #     return Title.objects.exclude(poster_url=None).order_by('primaryTitle', 'startYear', 'endYear')
 
     def get_serializer_class(self):
+        if self.request.query_params.get('onlytitle', None) or self.request.query_params.get('onlytitles', None):
+            return VeryShallowTitleSerializer
+        if self.request.query_params.get('shallow', None):
+            return ShallowTitleSerializer
         if self.action == 'list':
             return ShallowTitleSerializer
         if self.action == 'retrieve':

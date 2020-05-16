@@ -11,6 +11,7 @@ from .favourites import \
     ShallowFavouriteGenreSerializer
 
 from .imdb import \
+    VeryShallowTitleSerializer, \
     ShallowTitleSerializer, \
     ShallowRatingSerializer, \
     ShallowNameSerializer
