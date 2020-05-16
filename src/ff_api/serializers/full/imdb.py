@@ -15,11 +15,11 @@ class GenreSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NameSerializer(serializers.HyperlinkedModelSerializer):
-    knownForTitles = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='title-detail'
-    )
+    # knownForTitles = serializers.HyperlinkedRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     view_name='title-detail'
+    # )
 
     # principals = serializers.HyperlinkedRelatedField(
     #    many=True,
