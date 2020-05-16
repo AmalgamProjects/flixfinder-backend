@@ -20,20 +20,23 @@ from .imdb import \
     EpisodeViewSet, \
     PrincipalViewSet, \
     RatingViewSet
-    
-from .mdb import *
+
+from .mdb import \
+    MovieDbTitleViewSet, \
+    title_reviews
 
 from .rapid import \
     RapidTitleViewSet
-    
+
 from .recommend import \
-    RecommendationViewSet
+    RecommendationViewSet, \
+    titles_like_this
 
 from .seen import \
     SeenViewSet
 
 from .tastedive import \
     TasteTitleViewSet
-    
+
 from .watch import \
     WatchViewSet

@@ -69,38 +69,6 @@ def title_reviews(request, tconst):
                             'content': review['content'],
                         })
     except Exception as e:
-        raise
-        pprint.pprint(str(e))
-    result['count'] = len(result['results'])
-    return Response(result)
-
-
-@api_view(['GET'])
-def title_news(request, tconst):
-    result = {
-        "count": 0,
-        "next": None,
-        "previous": None,
-        "results": []
-    }
-    # noinspection PyBroadException
-    try:
-        if tconst[:2] == 'tt':
-            data = None
-            movie_id, tv_id = get_mdb_id_from_tconst(tconst)
-            if movie_id:
-                data = MovieDbTitle.call_api('3/movie/%s/reviews' % movie_id)
-            if tv_id:
-                data = MovieDbTitle.call_api('3/tv/%s/reviews' % tv_id)
-            if data:
-                if 'results' in data:
-                    for review in data['results']:
-                        result['results'].append({
-                            'author': review['author'],
-                            'content': review['content'],
-                        })
-    except Exception as e:
-        raise
         pprint.pprint(str(e))
     result['count'] = len(result['results'])
     return Response(result)

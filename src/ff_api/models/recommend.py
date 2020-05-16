@@ -67,16 +67,27 @@ class Recommendation(models.Model):
         return self.poster_url
 
     @staticmethod
-    def _get_suggestions_from_list_item(item_instance):
+    def get_suggestions_from_title_instance(title_instance):
         suggestions = []
-        rapid_instance = item_instance.title.get_rapid()
+        rapid_instance = title_instance.get_rapid()
         if rapid_instance is not None:
             if rapid_instance.similar.all().count() <= 0:
-                rapid_instance = RapidTitle.populate_related_from_api(item_instance.title.tconst, rapid_instance)
+                rapid_instance = RapidTitle.populate_related_from_api(title_instance.tconst, rapid_instance)
             for title_instance in rapid_instance.similar.all():
                 suggestions.append(title_instance)
         random.shuffle(suggestions)
         return suggestions
+
+    @staticmethod
+    def get_suggestions_from_tconst(tconst):
+        title_instance = Title.objects.filter(tconst=tconst).first()
+        if title_instance:
+            return Recommendation.get_suggestions_from_title_instance(title_instance)
+        return []
+
+    @staticmethod
+    def _get_suggestions_from_list_item(item_instance):
+        return Recommendation.get_suggestions_from_title_instance(item_instance.title)
 
     @staticmethod
     def _remove_duplicate_suggestions(suggestions):

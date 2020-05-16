@@ -33,6 +33,6 @@ router.register(r'tastetitle', views.TasteTitleViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('x/reviews/<str:tconst>/', views.title_reviews),
-    path('x/news/<str:tconst>/', views.title_reviews),
+    path('x/similar/<str:tconst>/', views.titles_like_this),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
