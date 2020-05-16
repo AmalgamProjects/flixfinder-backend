@@ -12,6 +12,7 @@ import random
 from django.contrib.auth.models import User
 from django.db import models
 
+from ..data import movies, tv_shows
 from .title import Title
 from .rapid import RapidTitle
 
@@ -127,8 +128,15 @@ class Recommendation(models.Model):
 
         # TODO use the data from user_instance.favourite_genres.all()
 
-        pprint.pprint('making random suggestions')
-        suggestions += Recommendation.random_good_movies(100 - len(suggestions))
+        pprint.pprint('making random movie suggestions')
+        suggestions += Recommendation.random_good_movies(50 - len(suggestions))
+        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
+
+        pprint.pprint('making random tvshow suggestions')
+        suggestions += Recommendation.random_good_tvshow(50 - len(suggestions))
+
+        suggestions += Recommendation.random_good_movies(10)
+        suggestions += Recommendation.random_good_tvshow(10)
         suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
 
         if len(suggestions) > 100:
@@ -166,106 +174,28 @@ class Recommendation(models.Model):
         return result
 
     @staticmethod
+    def random_good_tvshow(number=1):
+        result = []
+        for tconst in Recommendation.random_good_tvshow_tconsts(number):
+            result.append(Title.objects.filter(tconst=tconst).first())
+        return result
+
+    @staticmethod
     def random_good_movie_tconsts(number=1):
-        return random.sample([
-            'tt0111161',
-            'tt0068646',
-            'tt0071562',
-            'tt0468569',
-            'tt0050083',
-            'tt0108052',
-            'tt0167260',
-            'tt0110912',
-            'tt0060196',
-            'tt0120737',
-            'tt0137523',
-            'tt0109830',
-            'tt1375666',
-            'tt0080684',
-            'tt0167261',
-            'tt0133093',
-            'tt0099685',
-            'tt0073486',
-            'tt0047478',
-            'tt0114369',
-            'tt0118799',
-            'tt0317248',
-            'tt0102926',
-            'tt0038650',
-            'tt0076759',
-            'tt0120815',
-            'tt6751668',
-            'tt0245429',
-            'tt0120689',
-            'tt0816692',
-            'tt0110413',
-            'tt0114814',
-            'tt0056058',
-            'tt0110357',
-            'tt0120586',
-            'tt0253474',
-            'tt0088763',
-            'tt0103064',
-            'tt0027977',
-            'tt0054215',
-            'tt0172495',
-            'tt0021749',
-            'tt0407887',
-            'tt1675434',
-            'tt2582802',
-            'tt0482571',
-            'tt0064116',
-            'tt0095327',
-            'tt0034583',
-            'tt0047396',
-            'tt0095765',
-            'tt7286456',
-            'tt0078748',
-            'tt0078788',
-            'tt0209144',
-            'tt0082971',
-            'tt0032553',
-            'tt0405094',
-            'tt1853728',
-            'tt0050825',
-            'tt0081505',
-            'tt4154756',
-            'tt0910970',
-            'tt0043014',
-            'tt4633694',
-            'tt0119698',
-            'tt0057012',
-            'tt0364569',
-            'tt0051201',
-            'tt4154796',
-            'tt1345836',
-            'tt0066763',
-            'tt0087843',
-            'tt0090605',
-            'tt5311514',
-            'tt2380307',
-            'tt0169547',
-            'tt0112573',
-            'tt0082096',
-            'tt1187043',
-            'tt0114709',
-            'tt0057565',
-            'tt0986264',
-            'tt8579674',
-            'tt0086190',
-            'tt0086879',
-            'tt0105236',
-            'tt0361748',
-            'tt0119217',
-            'tt0062622',
-            'tt0052357',
-            'tt0180093',
-            'tt0022100',
-            'tt5074352',
-            'tt0338013',
-            'tt8267604',
-            'tt0033467',
-            'tt2106476',
-            'tt0093058',
-            'tt0053125',
-        ], number)
+        if number < 1:
+            number = 1
+        if number >= len(movies):
+            number = len(movies) - 1
+        result = random.sample(movies, number)
+        random.shuffle(result)
+        return result
+
+    @staticmethod
+    def random_good_tvshow_tconsts(number=1):
+        if number < 1:
+            number = 1
+        if number >= len(tv_shows):
+            number = len(tv_shows) - 1
+        result = random.sample(tv_shows, number)
+        random.shuffle(result)
+        return result

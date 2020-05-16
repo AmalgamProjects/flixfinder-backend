@@ -113,7 +113,7 @@ class RapidTitle(models.Model):
             for ref in data:
                 related_tconst = ref.split('/')[2]
                 new_instance = RapidTitle.populate_one_from_api(related_tconst, create_missing_title=False)
-                if new_instance.tconst:
+                if new_instance and new_instance.tconst:
                     rapid_instance.similar.add(new_instance.tconst)
         return rapid_instance
 
