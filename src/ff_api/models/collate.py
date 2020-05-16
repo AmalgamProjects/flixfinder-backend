@@ -4,6 +4,7 @@
 
 import pprint
 
+from ..data import movies, tv_shows
 from .imdb import Title
 from .mdb import MovieDbTitle
 from .rapid import RapidTitle
@@ -43,8 +44,11 @@ def collate_top_rated_movies():
     # pprint.pprint(data)
     for item in data:
         tconst_string = item['id'].split('/')[2]
-        if not Title.objects.filter(tconst=tconst_string).exists():
-            RapidTitle.create_title_from_rapid(tconst_string)
-    for item in data:
-        tconst_string = item['id'].split('/')[2]
+        collate_title(tconst_string)
+
+
+def collate_hard_coded():
+    for tconst_string in tv_shows:
+        collate_title(tconst_string)
+    for tconst_string in movies:
         collate_title(tconst_string)
