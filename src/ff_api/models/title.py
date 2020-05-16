@@ -130,37 +130,43 @@ class Title(models.Model):
             self.api_cached_tastedb = True
             self.save()
 
+    def _ensure_url_is_secure(self, url):
+        if url is not None:
+            if url[:5] == 'http:':
+                return 'https:' + url[5:]
+        return url
+
     def get_image_url(self):
         if self.image_url is None or self.image_url == "":
             self._cache_rapid_data()
         if self.image_url is None or self.image_url == "":
-            return self.poster_url
+            return self._ensure_url_is_secure(self.poster_url)
         else:
-            return self.image_url
+            return self._ensure_url_is_secure(self.image_url)
 
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
             self._cache_moviedb_data()
         if self.backdrop_url is None or self.backdrop_url == "":
             return self.get_image_url()
-        return self.backdrop_url
+        return self._ensure_url_is_secure(self.backdrop_url)
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
             self._cache_moviedb_data()
         if self.poster_url is None or self.poster_url == "":
             return self.get_image_url()
-        return self.poster_url
+        return self._ensure_url_is_secure(self.poster_url)
 
     def get_wikipedia_url(self):
         if self.wikipedia_url is None or self.wikipedia_url == "":
             self._cache_tastedb_data()
-        return self.wikipedia_url
+        return self._ensure_url_is_secure(self.wikipedia_url)
 
     def get_youtube_url(self):
         if self.youtube_url is None or self.youtube_url == "":
             self._cache_tastedb_data()
-        return self.youtube_url
+        return self._ensure_url_is_secure(self.youtube_url)
 
     def get_summary(self):
         if self.summary is None or self.summary == "":

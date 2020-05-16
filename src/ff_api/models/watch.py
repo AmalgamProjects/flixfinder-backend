@@ -52,6 +52,12 @@ class Watch(models.Model):
             self.cached_title_data = True
             self.save()
 
+    def _ensure_url_is_secure(self, url):
+        if url is not None:
+            if url[:5] == 'http:':
+                return 'https:' + url[5:]
+        return url
+
     def get_primary_title(self):
         if self.primaryTitle is None or self.primaryTitle == "":
             self._cache_title_data()
@@ -60,12 +66,12 @@ class Watch(models.Model):
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
             self._cache_title_data()
-        return self.backdrop_url
+        return self._ensure_url_is_secure(self.backdrop_url)
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
             self._cache_title_data()
-        return self.poster_url
+        return self._ensure_url_is_secure(self.poster_url)
 
 
 @receiver(post_save, sender=Watch)

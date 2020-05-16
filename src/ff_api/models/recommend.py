@@ -43,6 +43,12 @@ class Recommendation(models.Model):
     class Meta:
         ordering = ['user', 'priority']
 
+    def _ensure_url_is_secure(self, url):
+        if url is not None:
+            if url[:5] == 'http:':
+                return 'https:' + url[5:]
+        return url
+
     def _cache_title_data(self):
         if not self.cached_title_data and self.title is not None:
             if self.primaryTitle is None or self.primaryTitle == "":
@@ -62,12 +68,12 @@ class Recommendation(models.Model):
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
             self._cache_title_data()
-        return self.backdrop_url
+        return self._ensure_url_is_secure(self.backdrop_url)
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
             self._cache_title_data()
-        return self.poster_url
+        return self._ensure_url_is_secure(self.poster_url)
 
     @staticmethod
     def get_suggestions_from_title_instance(title_instance):
