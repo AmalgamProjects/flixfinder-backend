@@ -26,9 +26,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if not self.request.user.is_authenticated:
+        if not self.request.user.is_active:
             return queryset.none()
-        return queryset.filter(username=self.request.user.username)
+        if self.action == 'list':
+            if not self.request.user.is_staff:
+                return queryset.none()
+        return queryset  # .filter(username=self.request.user.username)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):

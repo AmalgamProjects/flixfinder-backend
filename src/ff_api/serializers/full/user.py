@@ -41,6 +41,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'recommended_movies',
             'recommended_tv',
         ]
+        read_only_fields = (
+            'username',
+        )
 
     def get_recommended_movies(self, instance):
         result = []
