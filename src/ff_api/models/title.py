@@ -74,44 +74,50 @@ class Title(models.Model):
         return self._cached_tastedb
 
     def get_image_url(self):
-        if self.image_url is None or self.image_url != "":
+        if self.image_url is None or self.image_url == "":
             instance = self.get_rapid()
             if instance is not None and instance.image_url != "":
                 self.image_url = instance.image_url
+                self.save()
         return self.image_url
 
     def get_backdrop_url(self):
-        if self.backdrop_url is None or self.backdrop_url != "":
+        if self.backdrop_url is None or self.backdrop_url == "":
             instance = self.get_moviedb()
             if instance is not None and instance.backdrop_url != "":
                 self.backdrop_url = instance.backdrop_url
+                self.save()
         return self.backdrop_url
 
     def get_poster_url(self):
-        if self.backdrop_url is None or self.backdrop_url != "":
+        if self.poster_url is None or self.poster_url == "":
             instance = self.get_moviedb()
-            if instance is not None and instance.backdrop_url != "":
-                self.backdrop_url = instance.poster_url
-            if self.backdrop_url is None or self.backdrop_url == "":
-                self.backdrop_url = self.get_image_url()
-        return self.backdrop_url
+            if instance is not None and instance.poster_url != "":
+                self.poster_url = instance.poster_url
+            if self.poster_url is None or self.poster_url == "":
+                self.poster_url = self.get_image_url()
+            if self.poster_url is not None or self.poster_url != "":
+                self.save()
+        return self.poster_url
 
     def get_wikipedia_url(self):
-        if self.wikipedia_url is None or self.wikipedia_url != "":
+        if self.wikipedia_url is None or self.wikipedia_url == "":
             instance = self.get_tastedb()
             if instance is not None and instance.wikipedia != "":
                 self.wikipedia_url = instance.wikipedia
+                self.save()
         return self.wikipedia_url
 
     def get_youtube_url(self):
-        if self.youtube_url is None or self.youtube_url != "":
+        if self.youtube_url is None or self.youtube_url == "":
             instance = self.get_tastedb()
             if instance is not None and instance.youtube != "":
                 self.youtube_url = instance.youtube
+                self.save()
         return self.youtube_url
 
     def get_summary(self):
-        if self.summary is None or self.summary != "":
+        if self.summary is None or self.summary == "":
             mdb = self.get_moviedb()
             if mdb is not None and mdb.overview != "":
                 self.summary = mdb.overview
@@ -119,26 +125,32 @@ class Title(models.Model):
                 tdb = self.get_tastedb()
                 if tdb is not None and tdb.teaser != "":
                     self.summary = tdb.teaser
+            if self.summary is not None and self.summary != "":
+                self.save()
         return self.summary
 
     def get_vote_average(self):
         if self.vote_average <= 0.0:
             try:
                 self.vote_average = self.rating.first().averageRating
+                self.save()
             except Exception:
                 instance = self.get_moviedb()
                 if instance is not None and instance.vote_average != "":
                     self.vote_average = instance.vote_average
+                    self.save()
         return self.vote_average
 
     def get_vote_count(self):
         if self.vote_count <= 0:
             try:
                 self.vote_count = self.rating.first().numVotes
+                self.save()
             except Exception:
                 instance = self.get_moviedb()
                 if instance is not None and instance.vote_average != "":
                     self.vote_count = instance.vote_count
+                    self.save()
         return self.vote_count
 
     def __str__(self):

@@ -44,21 +44,26 @@ class Seen(models.Model):
         if self.primaryTitle is None or self.primaryTitle == "":
             if self.title is not None:
                 self.primaryTitle = self.title.primaryTitle
+                self.save()
         return self.primaryTitle
 
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
             if self.title is not None:
                 self.backdrop_url = self.title.get_backdrop_url()
+                self.save()
         return self.backdrop_url
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
             if self.title is not None:
                 self.poster_url = self.title.get_poster_url()
+                self.save()
         return self.poster_url
 
 
 @receiver(post_save, sender=Seen)
-def seen_saved_handler(sender, instance, **kwargs):
-    Recommendation.update_recommendations_for_user(instance.user)
+def seen_saved_handler(sender, instance, created, **kwargs):
+    # TODO remove from other lists if added to this list
+    if created:
+        Recommendation.update_recommendations_for_user(instance.user)
