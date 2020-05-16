@@ -71,8 +71,9 @@ class TasteTitle(models.Model):
                     )
                     instance.tconst = Title.objects.filter(primaryTitle=name).first()
                     instance.save()
-                    # noinspection PyProtectedMember
-                    instance.tconst._cache_tastedb_data()
+                    if instance.tconst:
+                        # noinspection PyProtectedMember
+                        instance.tconst._cache_tastedb_data()
                     pprint.pprint('TasteTitle %s ... %s' % (name, instance.tconst))
                 except Exception as e:
                     pprint.pprint(e)

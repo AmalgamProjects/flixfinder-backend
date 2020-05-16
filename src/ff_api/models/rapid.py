@@ -87,8 +87,9 @@ class RapidTitle(models.Model):
                 title_instance = Title.objects.filter(tconst=tconst_string).first()
             instance.tconst = title_instance
             instance.save()
-            # noinspection PyProtectedMember
-            instance.tconst._cache_rapid_data()
+            if instance.tconst:
+                # noinspection PyProtectedMember
+                instance.tconst._cache_rapid_data()
             pprint.pprint('RapidTitle %s ... %s' % (data['title'], instance.tconst))
         except Exception as e:
             pprint.pprint(e)
