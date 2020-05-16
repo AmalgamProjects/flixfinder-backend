@@ -29,7 +29,7 @@ class NameSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Name
-        fields = ['primaryName', 'birthYear', 'deathYear', 'primaryProfession', 'knownForTitles']
+        fields = ['primaryName', 'birthYear', 'deathYear']
 
 
 class CrewSerializer(serializers.HyperlinkedModelSerializer):

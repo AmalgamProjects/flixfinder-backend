@@ -67,10 +67,10 @@ class TitleSerializer(serializers.HyperlinkedModelSerializer):
     def get_principals(self, instance):
         result = []
         for principal in instance.principals.all():
-            principal_data = PrincipalSerializer(principal, context=self.context).data
+            # principal_data = PrincipalSerializer(principal, context=self.context).data
             name_data = NameSerializer(principal.nconst, context=self.context).data
-            name_data['job'] = principal_data['job']
-            name_data['category'] = principal_data['category']
+            # name_data['job'] = principal_data['job']
+            # name_data['category'] = principal_data['category']
             result.append(name_data)
         return result
 
