@@ -34,28 +34,35 @@ class Recommendation(models.Model):
     backdrop_url = models.URLField(null=True, default=None)
     poster_url = models.URLField(null=True, default=None)
 
+    cached_title_data = models.BooleanField(default=False)
+
     class Meta:
         ordering = ['user', 'priority']
 
+    def _cache_title_data(self):
+        if not self.cached_title_data and self.title is not None:
+            if self.primaryTitle is None or self.primaryTitle == "":
+                self.primaryTitle = self.title.primaryTitle
+            if self.backdrop_url is None or self.backdrop_url == "":
+                self.backdrop_url = self.title.get_backdrop_url()
+            if self.poster_url is None or self.poster_url == "":
+                self.poster_url = self.title.get_poster_url()
+            self.cached_title_data = True
+            self.save()
+
     def get_primary_title(self):
         if self.primaryTitle is None or self.primaryTitle == "":
-            if self.title is not None:
-                self.primaryTitle = self.title.primaryTitle
-                self.save()
+            self._cache_title_data()
         return self.primaryTitle
 
     def get_backdrop_url(self):
         if self.backdrop_url is None or self.backdrop_url == "":
-            if self.title is not None:
-                self.backdrop_url = self.title.get_backdrop_url()
-                self.save()
+            self._cache_title_data()
         return self.backdrop_url
 
     def get_poster_url(self):
         if self.poster_url is None or self.poster_url == "":
-            if self.title is not None:
-                self.poster_url = self.title.get_poster_url()
-                self.save()
+            self._cache_title_data()
         return self.poster_url
 
     @staticmethod
