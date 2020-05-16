@@ -48,8 +48,8 @@ class TitleViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     filterset_fields = ['titleType']
 
-    def get_queryset(self):
-        return Title.objects.exclude(poster_url=None).order_by('primaryTitle', 'startYear', 'endYear')
+    # def get_queryset(self):
+    #     return Title.objects.exclude(poster_url=None).order_by('primaryTitle', 'startYear', 'endYear')
 
     def get_serializer_class(self):
         if self.action == 'list':
