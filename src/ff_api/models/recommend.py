@@ -11,6 +11,8 @@ import random
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from ..data import movies, tv_shows
 from .title import Title
@@ -19,6 +21,7 @@ from .rapid import RapidTitle
 from ..fields import DateTimeFieldWithoutMicroseconds
 
 
+# noinspection PyShadowingBuiltins
 class Recommendation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = DateTimeFieldWithoutMicroseconds(auto_now_add=True, editable=False)
@@ -106,63 +109,145 @@ class Recommendation(models.Model):
         return result
 
     @staticmethod
+    def _remove_excluded(suggestions, excluded):
+        result = []
+        for item in suggestions:
+            if not item:
+                continue
+            tconst_string = item.tconst
+            keep = True
+            for excluded_tconst in excluded:
+                if excluded_tconst == tconst_string:
+                    keep = False
+                    break
+            if keep:
+                result.append(item)
+        return result
+
+    # noinspection PyBroadException
+    @staticmethod
     def update_recommendations_for_user(user_instance: User):
 
         pprint.pprint('user has %s suggestions' % user_instance.recommendation.get_queryset().count())
 
+        maximum = 100
+
         suggestions = []
 
-        if len(suggestions) < 100:
-            pprint.pprint('making suggestions from favourites')
-            for favourite in user_instance.favourites.all():
-                suggestions += Recommendation._get_suggestions_from_list_item(favourite)
+        excluded_tconsts = []
+        for already_seen in user_instance.seen.all().prefetch_related('title'):
+            if already_seen.title:
+                excluded_tconsts.append(already_seen.title.tconst)
 
-        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
-        if len(suggestions) < 100:
-            pprint.pprint('making suggestions from watch')
-            for want_to_watch in user_instance.watch.all():
-                suggestions += Recommendation._get_suggestions_from_list_item(want_to_watch)
+        pprint.pprint('making suggestions from favourites')
+        for favourite in user_instance.favourites.all().prefetch_related('title'):
+            suggestions += Recommendation._get_suggestions_from_list_item(favourite)
+            if len(suggestions) > int(maximum * 1.5):
+                break
+        pprint.pprint('new suggestions count = %s' % len(suggestions))
 
-        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
-        if len(suggestions) < 100:
+        pprint.pprint('making suggestions from watch')
+        for want_to_watch in user_instance.watch.all().prefetch_related('title'):
+            suggestions += Recommendation._get_suggestions_from_list_item(want_to_watch)
+            if len(suggestions) > int(maximum * 1.5):
+                break
+        pprint.pprint('new suggestions count = %s' % len(suggestions))
+
+        if len(suggestions) < maximum:
             pprint.pprint('making suggestions from seen')
-            for already_seen in user_instance.seen.all():
+            for already_seen in user_instance.seen.all().prefetch_related('title'):
                 if already_seen.liked and not already_seen.disliked:
                     suggestions += Recommendation._get_suggestions_from_list_item(already_seen)
+                    if len(suggestions) > int(maximum * 1.5):
+                        break
+            pprint.pprint('new suggestions count = %s' % len(suggestions))
 
-        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
-        if len(suggestions) < 100:
+        if len(suggestions) < maximum:
             pprint.pprint('making suggestions from seen')
-            for already_seen in user_instance.seen.all():
+            for already_seen in user_instance.seen.all().prefetch_related('title'):
                 if not already_seen.liked and not already_seen.disliked:
                     suggestions += Recommendation._get_suggestions_from_list_item(already_seen)
+                    if len(suggestions) > int(maximum * 1.5):
+                        break
+            pprint.pprint('new suggestions count = %s' % len(suggestions))
+
+        if len(suggestions) < maximum:
+            pprint.pprint('making suggestions from old suggestions')
+            for old_suggestion in user_instance.recommendation.get_queryset().prefetch_related('title'):
+                suggestions += Recommendation._get_suggestions_from_list_item(old_suggestion)
+                if len(suggestions) > int(maximum * 1.5):
+                    break
+            pprint.pprint('new suggestions count = %s' % len(suggestions))
+
+        if len(suggestions) < maximum:
+            pprint.pprint('making suggestions from new suggestions')
+            for suggestion in suggestions:
+                suggestions += Recommendation.get_suggestions_from_title_instance(suggestion)
+                if len(suggestions) > int(maximum * 1.5):
+                    break
+            suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
+            pprint.pprint('new suggestions count = %s' % len(suggestions))
 
         # TODO use the data from user_instance.favourite_genres.all()
 
-        pprint.pprint('making random movie suggestions')
-        suggestions += Recommendation.random_good_movies(50 - len(suggestions))
+        if len(suggestions) > 0:
+            suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
+            suggestions = Recommendation._remove_excluded(suggestions, excluded_tconsts)
+
+        if len(suggestions) < maximum:
+            pprint.pprint('making random suggestions')
+            suggestions += Recommendation.random_good_movies(int(maximum / 2))
+            suggestions += Recommendation.random_good_tvshow(int(maximum / 2))
+
+            suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
+            suggestions = Recommendation._remove_excluded(suggestions, excluded_tconsts)
+            pprint.pprint('new suggestions count = %s' % len(suggestions))
+
+        suggested_movies = []
+        suggested_tv = []
+
+        # Ensure that we have a fix of Movies and TV shows
+        for suggestion in suggestions:
+            if suggestion.titleType[:2] == 'tv':
+                suggested_tv.append(suggestion)
+            elif suggestion.titleType == 'movie':
+                suggested_movies.append(suggestion)
+        count_movie = len(suggested_movies)
+        count_tv = len(suggested_tv)
+        pprint.pprint(
+            'new suggestions count = move:%s tv:%s total:%s' % (
+                count_movie, count_tv, len(suggestions)
+            )
+        )
+        if len(suggested_movies) > maximum:
+            suggested_movies = suggested_movies[:maximum]
+        if len(suggested_movies) > maximum:
+            suggested_tv = suggested_tv[:maximum]
+        if count_movie < 50:
+            pprint.pprint('adding more random movies')
+            suggested_movies += Recommendation.random_good_movies(50)
+            suggested_movies = Recommendation._remove_duplicate_suggestions(suggested_movies)
+        if count_tv < 50:
+            pprint.pprint('adding more random tv shows')
+            suggested_tv += Recommendation.random_good_movies(50)
+            suggested_tv = Recommendation._remove_duplicate_suggestions(suggested_tv)
+        suggestions = suggested_movies + suggested_tv
         suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
-
-        pprint.pprint('making random tvshow suggestions')
-        suggestions += Recommendation.random_good_tvshow(50 - len(suggestions))
-
-        suggestions += Recommendation.random_good_movies(10)
-        suggestions += Recommendation.random_good_tvshow(10)
-        suggestions = Recommendation._remove_duplicate_suggestions(suggestions)
-
-        if len(suggestions) > 100:
-            suggestions = suggestions[:100]
 
         pprint.pprint('deleting old suggestions')
-        user_instance.recommendation.get_queryset().all().delete()
+        try:
+            if user_instance.recommendation.get_queryset().count():
+                user_instance.recommendation.get_queryset().all().delete()
+        except Exception:
+            pass
 
-        pprint.pprint('saving new suggestions')
+        pprint.pprint('saving %s new suggestions' % len(suggestions))
 
         priority = 0
+        new_recommendations = []
         for suggestion in suggestions:
             if suggestion is None:
                 continue
-            # noinspection PyBroadException
             try:
                 r = Recommendation(
                     user=user_instance,
@@ -172,10 +257,12 @@ class Recommendation(models.Model):
                     backdrop_url=suggestion.get_backdrop_url(),
                     poster_url=suggestion.get_poster_url()
                 )
-                r.save()
+                # r.save()
+                new_recommendations.append(r)
                 priority += 1
             except Exception:
                 pass
+        user_instance.recommendation.set(new_recommendations, bulk=False, clear=True)
 
     @staticmethod
     def random_good_movies(number=1):
@@ -210,3 +297,9 @@ class Recommendation(models.Model):
         result = random.sample(tv_shows, number)
         random.shuffle(result)
         return result
+
+
+@receiver(post_save, sender=User)
+def user_saved_handler(sender, instance, created, **kwargs):
+    if created:
+        Recommendation.update_recommendations_for_user(instance)
